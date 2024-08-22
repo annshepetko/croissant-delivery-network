@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="user" name="Default">
+        <packages>
+          <package value="com.ann.delivery" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="product" name="Default">
+        <packages>
+          <package value="com.delivery.product" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>

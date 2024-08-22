@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: product-service
+  datasource:
+    password: root
+    url: jdbc:postgresql://localhost:5432/product
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  config:
+    import: optional:configserver:http://localhost:8888
