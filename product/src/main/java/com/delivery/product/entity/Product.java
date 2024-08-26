@@ -25,7 +25,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Size(min = 4, max = 15)
+    @Size(min = 4, max = 64)
     @NotNull
     @NotEmpty
     private String name;
