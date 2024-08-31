@@ -51,5 +51,5 @@ public class Order {
     private BigDecimal totalPrice;
 
 
-    private Long userId;
+    private String email;
 }

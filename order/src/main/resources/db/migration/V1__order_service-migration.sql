@@ -24,7 +24,7 @@ create table orders
     user_lastname     TEXT,
     user_phone_number VARCHAR(10),
     total_price       DECIMAL,
-    user_id           BIGINT,
+    email             TEXT,
     address_id        BIGINT,
     CONSTRAINT address_fk FOREIGN KEY (address_id) REFERENCES address (id)
 );

@@ -1,9 +1,11 @@
 package com.delivery.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record OrderProductRequest (
 
         @JsonProperty(value = "id")

@@ -22,9 +22,18 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public NewTopic topic(){
+    public NewTopic topicOrder(){
         return TopicBuilder
                 .name("order-confirmation")
+                .partitions(10)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic topicUser(){
+        return TopicBuilder
+                .name("user-order-confirmation")
                 .partitions(10)
                 .replicas(1)
                 .build();

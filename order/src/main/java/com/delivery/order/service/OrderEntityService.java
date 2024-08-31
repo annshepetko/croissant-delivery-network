@@ -18,12 +18,18 @@ public class OrderEntityService {
     private final OrderMapper orderMapper;
 
     @Transactional
-    public void saveOrder(OrderMapper.OrderBody orderBody){
+    public Order saveOrder(OrderMapper.OrderBody orderBody){
 
+        Order order = buildOrder(orderBody);
+
+        return orderRepository.save(order);
+    }
+
+    private Order buildOrder(OrderMapper.OrderBody orderBody) {
         Address address = addressMapper.mapToAddress(orderBody.getPerformOrderRequest().address());
 
         Order order = Order.builder()
-                .userId(orderBody.getUserId())
+                .email(orderBody.getEmail())
                 .totalPrice(orderBody.getPrice())
                 .userLastName(orderBody.getPerformOrderRequest().userFirstname())
                 .userFirstName(orderBody.getPerformOrderRequest().userFirstname())
@@ -33,7 +39,6 @@ public class OrderEntityService {
 
         order.setOrderedProducts(orderMapper.mapToOrderedProduct(orderBody.getPerformOrderRequest().orderProductRequests(), order));
         address.setOrder(order);
-
-         orderRepository.save(order);
+        return order;
     }
 }

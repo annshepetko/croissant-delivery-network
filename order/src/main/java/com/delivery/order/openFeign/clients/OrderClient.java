@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface OrderClient {
 
     @GetMapping("/api/v1/user/is-registered")
-    ResponseEntity<Optional<Long>> getUserId(@RequestHeader("Authorization") String token);
+    ResponseEntity<Optional<String>> getUserId(@RequestHeader("Authorization") String token);
 
 }
 
