@@ -1,0 +1,20 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: order-service
+  cloud:
+  kafka:
+    producer:
+      bootstrap-servers: localhost:29092
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    username: postgres
+    password: root
+    url: jdbc:postgresql://localhost:5432/orders
+    driver-class-name: org.postgresql.Driver
+server:
+  port: 8060

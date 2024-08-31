@@ -1,0 +1,7 @@
+
+flyway:
+  baseline-on-migrate: true
+  password: root
+  url: jdbc:postgresql://localhost:5432/orders
+  enabled: true
+  schemas: public

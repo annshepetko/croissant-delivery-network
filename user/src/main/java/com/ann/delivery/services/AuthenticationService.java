@@ -27,7 +27,7 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-
+    private final UserService userService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -60,7 +60,7 @@ public class AuthenticationService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    @Transactional
+
     private AuthenticationResponse authDispatcher(User user, HttpServletResponse httpServletResponse) {
 
         userRepository.save(user);

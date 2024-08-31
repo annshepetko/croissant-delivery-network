@@ -12,6 +12,11 @@
           <package value="com.delivery.product" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="order" name="Default">
+        <packages>
+          <package value="com.delivery.order" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>
