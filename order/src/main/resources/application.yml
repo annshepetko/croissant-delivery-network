@@ -4,9 +4,6 @@ spring:
   application:
     name: order-service
   cloud:
-  kafka:
-    producer:
-      bootstrap-servers: localhost:29092
   jpa:
     show-sql: true
     hibernate:

@@ -1,15 +1,16 @@
 package com.ann.delivery.entity;
 
 import com.ann.delivery.enums.Roles;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 
 @Entity
@@ -27,7 +28,13 @@ public class User extends BaseEntity implements UserDetails {
 
     private String password;
 
+    @Enumerated(value = EnumType.STRING)
     private Roles role;
+    private double bonuses;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<OrderUser> orderIds;
 
     public User() {
         super();

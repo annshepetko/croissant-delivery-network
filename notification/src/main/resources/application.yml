@@ -1,0 +1,30 @@
+spring:
+  mail:
+
+    host: smtp.gmail.com
+    port: 587
+    username: lvivcroissaintspet@gmail.com
+    password: hser xfeb dgdb anrz
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.ssl.trust: smtp.gmail.com
+  application:
+    name: notification-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/notification
+    password: root
+    username: postgres
+  kafka:
+    consumer:
+      group-id: notification-id
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  config:
+    import: optional:configserver:http://localhost:8888
+server:
+  port: 8040

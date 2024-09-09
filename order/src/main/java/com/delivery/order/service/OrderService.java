@@ -1,41 +1,49 @@
 package com.delivery.order.service;
 
-
 import com.delivery.order.dto.PerformOrderRequest;
-import com.delivery.order.kafka.dto.OrderNotification;
 import com.delivery.order.openFeign.clients.OrderClient;
-import lombok.RequiredArgsConstructor;
+import com.delivery.order.openFeign.dto.UserDto;
+import com.delivery.order.service.interfaces.OrderProcessor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class OrderService {
 
     private final OrderClient orderClient;
+
+    @Qualifier
     private final OrderProcessor orderProcessor;
+    private final OrderProcessor simpleOrderProcessor;
 
-
-    private Optional<String> getUserEmail(String token){
-        var userId = orderClient.getUserId(token).getBody();
-        return userId;
+    public OrderService(OrderClient orderClient,
+                        @Qualifier("authorizedOrderProcessor") OrderProcessor orderProcessor,
+                        @Qualifier("simpleOrderProcessor") OrderProcessor simpleOrderProcessor
+    ) {
+        this.orderClient = orderClient;
+        this.orderProcessor = orderProcessor;
+        this.simpleOrderProcessor = simpleOrderProcessor;
     }
 
-    public void performOrder(PerformOrderRequest performOrderRequest, String token){
+    private Optional<UserDto> getUser(String token) {
 
-        Optional<String> email = getUserEmail(token);
-        log.info("USER_EMAIL : " + email);
-
-        processOrderBasedOnUserStatus(email, performOrderRequest);
-
+        return orderClient.getUserId(token).getBody();
     }
 
-    private OrderNotification processOrderBasedOnUserStatus(Optional<String> email, PerformOrderRequest performOrderRequest){
+    public void performOrder(PerformOrderRequest performOrderRequest, String token) {
 
-        return orderProcessor.processOrder(performOrderRequest, email);
+        Optional<UserDto> user = getUser(token);
+        log.info("USER_EMAIL : " + user);
+
+        if (user.isPresent()) {
+            orderProcessor.processOrder(performOrderRequest, user);
+        } else {
+            simpleOrderProcessor.processOrder(performOrderRequest, user);
+        }
     }
 
 }

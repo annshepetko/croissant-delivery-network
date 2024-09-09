@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        div {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            margin: 8px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        p span {
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            border-color: #007BFF;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+
+        .product-card p span {
+            color: #555;
+        }
+        .product-card-footer{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+
+    <p>ID замовлення: <span th:text="${orderId}">100</span></p>
+    <div th:each="product :${products}">
+        <p> Назва: <span th:text="${product.name}">name</span></p>
+        <p>Кількість : <span th:text="${product.amount}">amount</span></p>
+        <p>Ціна: <span th:text="${product.price}">price</span></p>
+    </div>
+    <div class="product-card-footer">
+        <p>Загальна вартість замовелння: <span th:text="${totalPrice}">10</span></p>
+        <p>Вам нараховано бонусні 2 гривні до наступного замовлення </p>
+    </div>
+
+</div>
+
+</body>
+</html>

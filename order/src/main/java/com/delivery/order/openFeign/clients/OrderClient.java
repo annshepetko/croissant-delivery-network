@@ -1,6 +1,7 @@
 package com.delivery.order.openFeign.clients;
 
 
+import com.delivery.order.openFeign.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public interface OrderClient {
 
     @GetMapping("/api/v1/user/is-registered")
-    ResponseEntity<Optional<String>> getUserId(@RequestHeader("Authorization") String token);
+    ResponseEntity<Optional<UserDto>> getUserId(@RequestHeader("Authorization") String token);
 
 }
 

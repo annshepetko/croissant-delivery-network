@@ -25,7 +25,7 @@ public class OrderController {
             HttpServletRequest httpServletRequest
     ){
         String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(token);
+
         orderService.performOrder(performOrderRequest, token);
     }
 }

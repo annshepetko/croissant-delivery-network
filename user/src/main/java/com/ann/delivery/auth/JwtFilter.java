@@ -49,7 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 String username = jwtService.extractUsername(accessToken);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 log.info("USERNAME ::" + username);
-                setAuthenticationContext(userDetails, request);
+                setAuthenticationContext(userDetails, request, accessToken);
+                request.setAttribute("user", userDetails);
             }
             filterChain.doFilter(request, response);
 
@@ -61,14 +62,14 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
 
-    private void setAuthenticationContext(UserDetails userDetails, HttpServletRequest request) {
+    private void setAuthenticationContext(UserDetails userDetails, HttpServletRequest request, String jwtToken) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 userDetails,
-                null,
+                jwtToken,
                 userDetails.getAuthorities()
         );
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        request.setAttribute("authenticatedUser", userDetails);
+
     }
 }

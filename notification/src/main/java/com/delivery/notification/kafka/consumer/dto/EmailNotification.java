@@ -1,19 +1,17 @@
-package com.delivery.order.kafka.dto;
+package com.delivery.notification.kafka.consumer.dto;
 
-import com.delivery.order.dto.OrderProductRequest;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Builder
-public record OrderNotification (
+public record EmailNotification(
 
         BigDecimal totalPrice,
         Long orderId,
         List<OrderProductRequest> products,
-        String email,
-        String userPhoneNumber
-
+        String email
 ){
 }
+
