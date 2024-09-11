@@ -1,7 +1,6 @@
 package com.ann.delivery.services;
 
-import com.ann.delivery.UserRepository;
-import com.ann.delivery.dto.UserDto;
+import com.ann.delivery.dto.order.UserOrderDto;
 import com.ann.delivery.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,26 +14,26 @@ import java.util.Optional;
 public class UserOrderService {
 
     private final JwtService jwtService;
-    private final UserRepository userRepository;
 
-    public Optional<UserDto> getUserIdIfPresent(String token) {
-        User user = getUSer(token);
+    private final UserEntityService userEntityService;
+    public Optional<UserOrderDto> getUserIdIfPresent(String token) {
+        User user = getUser(token);
         log.info("user :: " + user.getEmail());
-        return Optional.of(UserDto.builder()
+        return Optional.of(UserOrderDto.builder()
                 .bonuses(user.getBonuses())
                 .email(user.getEmail())
                 .build());
     }
 
     public Double getUSerBonuses(String token) {
-        User user = getUSer(token);
+        User user = getUser(token);
         return user.getBonuses();
     }
 
-    private User getUSer(String token){
+    private User getUser(String token){
 
         String email = jwtService.extractUsername(token.substring(7));
 
-        return userRepository.findByEmail(email).orElseThrow();
+        return userEntityService.getUserByEmail(email);
     }
 }

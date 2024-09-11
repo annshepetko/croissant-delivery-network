@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.xml.crypto.Data;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -34,6 +35,13 @@ public class JwtService {
     public String generateRefreshToken(Map<String, Object > credentials, UserDetails user){
         return buildToken(credentials, user, this.refreshToken);
     }
+
+    public String generatePasswordRefreshToken(Map<String, Object> credentials, UserDetails user) {
+
+        return buildToken(credentials, user, 300_00L);
+
+    }
+
     private String buildToken(Map<String, Object> credentials, UserDetails user, long expiration) {
         return Jwts.builder()
                 .addClaims(credentials)

@@ -1,4 +1,4 @@
-package com.ann.delivery.dto;
+package com.ann.delivery.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

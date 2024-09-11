@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Configuration
 @EnableKafka
-public class UserConsumerConfig {
+public class KafkaUserConsumerConfig {
 
 
     @Value("${spring.kafka.consumer.group-id}")

@@ -1,4 +1,4 @@
-package com.ann.delivery.dto;
+package com.ann.delivery.dto.auth;
 
 import jakarta.servlet.http.Cookie;
 

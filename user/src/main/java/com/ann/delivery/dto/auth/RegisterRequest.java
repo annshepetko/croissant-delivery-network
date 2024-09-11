@@ -1,4 +1,4 @@
-package com.ann.delivery.dto;
+package com.ann.delivery.dto.auth;
 
 import com.ann.delivery.enums.Roles;
 import jakarta.validation.constraints.Email;

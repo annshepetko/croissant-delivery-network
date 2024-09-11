@@ -2,9 +2,10 @@ package com.delivery.order.service;
 
 import com.delivery.order.dto.OrderDto;
 import com.delivery.order.entity.Order;
-import com.delivery.order.mapper.OrderUserMapper;
 import com.delivery.order.repo.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,14 +15,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderUserService {
 
-    private final OrderUserMapper orderUserMapper;
     private final OrderRepository orderRepository;
 
-    public Optional<List<OrderDto>> getAllUserOrders(String name) {
+    public Optional<Page<OrderDto>> getAllUserOrders(String name, Pageable pageable) {
 
-        List<Order> orders = orderRepository.findAllByEmail(name).orElseThrow();
+        var orders = orderRepository.findAllByEmail(name, pageable);
 
-        return Optional.of(orderUserMapper.mapToOrderUserPageDto(orders));
+        return orders;
     }
 
 }

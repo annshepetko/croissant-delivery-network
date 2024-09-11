@@ -1,9 +1,8 @@
-package com.ann.delivery.dto;
+package com.ann.delivery.dto.profile;
 
-import com.ann.delivery.dto.OrderDto;
+import com.ann.delivery.dto.order.OrderDto;
 import lombok.Builder;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @Builder
 public record UserProfilePage(
@@ -12,6 +11,6 @@ public record UserProfilePage(
         String userLastname,
         int numberOrders,
         Double bonuses,
-        List<OrderDto> orders
+        Page<OrderDto> orders
 ) {
 }

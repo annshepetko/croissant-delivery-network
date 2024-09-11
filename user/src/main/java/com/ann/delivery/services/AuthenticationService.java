@@ -1,9 +1,9 @@
 package com.ann.delivery.services;
 
 import com.ann.delivery.UserRepository;
-import com.ann.delivery.dto.AuthenticationRequest;
-import com.ann.delivery.dto.AuthenticationResponse;
-import com.ann.delivery.dto.RegisterRequest;
+import com.ann.delivery.dto.auth.AuthenticationRequest;
+import com.ann.delivery.dto.auth.AuthenticationResponse;
+import com.ann.delivery.dto.auth.RegisterRequest;
 import com.ann.delivery.entity.User;
 import com.ann.delivery.factory.CookieFactory;
 import io.jsonwebtoken.ExpiredJwtException;
