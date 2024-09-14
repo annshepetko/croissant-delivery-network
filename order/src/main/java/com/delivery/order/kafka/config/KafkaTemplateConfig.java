@@ -19,7 +19,9 @@ public class KafkaTemplateConfig {
 
     @Bean
     public ProducerFactory<String, EmailNotification> producerEmailFactory() {
-        return new DefaultKafkaProducerFactory<>(emailProducerConfigs());
+        JsonSerializer<EmailNotification> serializer = new JsonSerializer<>();
+
+        return new DefaultKafkaProducerFactory<>(emailProducerConfigs(), new StringSerializer(), serializer);
     }
 
     @Bean
@@ -36,6 +38,9 @@ public class KafkaTemplateConfig {
 
     @Bean
     public KafkaTemplate<String, EmailNotification> emailKafkaTemplate(){
+
+
+
         return new KafkaTemplate(producerEmailFactory());
     }
 

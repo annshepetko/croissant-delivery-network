@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 public class EmailNotification {
-    private String email;
+    protected String email;
 
     public EmailNotification(String email) {
         this.email = email;

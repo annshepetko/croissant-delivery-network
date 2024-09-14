@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 public record OrderProductRequest (
 
         @JsonProperty(value = "id")
-
         Long productId,
 
         String name,

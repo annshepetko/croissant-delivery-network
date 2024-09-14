@@ -38,7 +38,7 @@ public class JwtService {
 
     public String generatePasswordRefreshToken(Map<String, Object> credentials, UserDetails user) {
 
-        return buildToken(credentials, user, 300_00L);
+        return buildToken(credentials, user, 300_000L);
 
     }
 

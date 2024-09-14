@@ -3,10 +3,12 @@ package com.ann.delivery.controller;
 import com.ann.delivery.dto.auth.AuthenticationRequest;
 import com.ann.delivery.dto.auth.AuthenticationResponse;
 import com.ann.delivery.dto.auth.RegisterRequest;
+import com.ann.delivery.dto.auth.ResetPasswordRequest;
 import com.ann.delivery.dto.forgotten.password.ForgotPasswordRequest;
 import com.ann.delivery.services.AuthenticationService;
 import com.ann.delivery.services.ForgotPasswordService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,11 +36,17 @@ public class AuthController {
     }
     @PostMapping("/forgot")
     public void resetForgottenPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest){
-
+        forgotPasswordService.prepareResetPassword(forgotPasswordRequest);
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse httpServletResponse){
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest, httpServletResponse));
+    }
+
+    @PatchMapping("/reset-password")
+    public void resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
+        forgotPasswordService.resetPassword(resetPasswordRequest);
+
     }
 }

@@ -1,6 +1,6 @@
 package com.delivery.notification.services.impl;
 
-import com.delivery.notification.kafka.consumer.dto.UserResetPasswordNotification;
+import com.delivery.notification.dto.mail.UserResetPasswordNotification;
 import com.delivery.notification.services.interfaces.NotificationService;
 import jakarta.mail.MessagingException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;

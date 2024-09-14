@@ -1,4 +1,4 @@
-package com.delivery.notification.kafka.consumer.dto;
+package com.delivery.notification.dto.mail;
 
 import com.delivery.notification.dto.mail.EmailNotification;
 import lombok.Getter;

@@ -6,10 +6,9 @@ import lombok.Builder;
 import java.math.BigDecimal;
 
 @Builder
-public record OrderProductRequest (
+public record OrderProductNotificationKafkaPart(
 
         @JsonProperty(value = "id")
-
         Long productId,
 
         String name,
