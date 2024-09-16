@@ -26,15 +26,15 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final UserOrderService userOrderService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserEntityService userEntityService;
 
     public AuthenticationResponse register(RegisterRequest request, HttpServletResponse httpServletResponse) {
 
-        if(isUserAlreadyExist(request.email())){
+        if(userEntityService.isUserAlreadyRegistered(request.email())){
+
             throw new EntityExistsException("User already registered");
         }
         User userDetails = (User) buildUserModel(request);
@@ -55,14 +55,9 @@ public class AuthenticationService {
         return userDetails;
     }
 
-    private boolean isUserAlreadyExist(String email){
-        return userRepository.findByEmail(email).isPresent();
-    }
-
-
     private AuthenticationResponse authDispatcher(User user, HttpServletResponse httpServletResponse) {
 
-        userRepository.save(user);
+        userEntityService.saveUser(user);
 
         String accessToken = jwtService.generateToken(new HashMap<>(), user);
         String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
@@ -89,7 +84,7 @@ public class AuthenticationService {
         } catch (ExpiredJwtException e) {
             throw new SessionAuthenticationException("Session has expired");
         }
-        UserDetails user = userRepository.findByEmail(username).orElseThrow(() -> new EntityNotFoundException("User with this email not found"));
+        UserDetails user = userEntityService.getUserByEmail(username);
         String accessToken = jwtService.generateToken(new HashMap<>(), user);
 
         return new AuthenticationResponse(accessToken);
@@ -100,7 +95,7 @@ public class AuthenticationService {
 
         authenticateUser(authenticationRequest.email(), authenticationRequest.password());
 
-        UserDetails userDetails = getUserDetails(authenticationRequest.email());
+        UserDetails userDetails = userEntityService.getUserByEmail(authenticationRequest.email());
 
         String accessToken = jwtService.generateToken(new HashMap<>(), userDetails);
         String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), userDetails);
@@ -121,11 +116,6 @@ public class AuthenticationService {
                 )
 
         );
-    }
-
-    private UserDetails getUserDetails(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with this email not found"));
     }
 
 }

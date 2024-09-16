@@ -1,5 +1,6 @@
 package com.delivery.order.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 
 import java.io.Serializable;
@@ -7,6 +8,8 @@ import java.io.Serializable;
 /**
  * DTO for {@link com.delivery.order.entity.Address}
  */
+
+@Valid
 public record AddressDto(
 
         String city,

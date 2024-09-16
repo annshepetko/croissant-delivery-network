@@ -30,6 +30,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Enumerated(value = EnumType.STRING)
     private Roles role;
+
     private double bonuses;
 
 

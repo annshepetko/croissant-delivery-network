@@ -8,6 +8,7 @@ import com.ann.delivery.dto.forgotten.password.ForgotPasswordRequest;
 import com.ann.delivery.services.AuthenticationService;
 import com.ann.delivery.services.ForgotPasswordService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest registerRequest,
+            @Valid @RequestBody RegisterRequest registerRequest,
             HttpServletResponse httpServletResponse
     ){
 
@@ -35,17 +36,17 @@ public class AuthController {
         return ResponseEntity.ok(authenticationService.refreshAccessToken(refreshToken));
     }
     @PostMapping("/forgot")
-    public void resetForgottenPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest){
+    public void resetForgottenPassword(@RequestBody @Valid ForgotPasswordRequest forgotPasswordRequest){
         forgotPasswordService.prepareResetPassword(forgotPasswordRequest);
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse httpServletResponse){
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletResponse httpServletResponse){
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest, httpServletResponse));
     }
 
     @PatchMapping("/reset-password")
-    public void resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
+    public void resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest){
         forgotPasswordService.resetPassword(resetPasswordRequest);
 
     }
