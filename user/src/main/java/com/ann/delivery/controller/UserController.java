@@ -19,7 +19,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserOrderService userOrderService;

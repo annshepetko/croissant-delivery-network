@@ -1,9 +1,8 @@
 package com.delivery.order.mapper;
 
-import com.delivery.order.dto.AddressDto;
+import com.delivery.order.dto.address.AddressDto;
 import com.delivery.order.entity.Address;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class AddressMapper {
@@ -17,6 +16,20 @@ public class AddressMapper {
                 .entrance(addressDto.entrance())
                 .street(addressDto.street())
                 .district(addressDto.district())
+                .build();
+    }
+
+    public AddressDto mapToAddressDto(Address address){
+
+        return AddressDto.builder()
+                .city(address.getCity())
+                .id(address.getId())
+                .house(address.getHouse())
+                .street(address.getStreet())
+                .floor(address.getFloor())
+                .flat(address.getFlat())
+                .district(address.getDistrict())
+                .entrance(address.getEntrance())
                 .build();
     }
 

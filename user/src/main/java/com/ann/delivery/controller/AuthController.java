@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/user/auth")
 public class AuthController {
 
     private final ForgotPasswordService forgotPasswordService;

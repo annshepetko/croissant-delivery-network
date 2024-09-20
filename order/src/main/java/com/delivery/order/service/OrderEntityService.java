@@ -2,6 +2,7 @@ package com.delivery.order.service;
 
 import com.delivery.order.entity.Address;
 import com.delivery.order.entity.Order;
+import com.delivery.order.entity.status.OrderStatus;
 import com.delivery.order.mapper.AddressMapper;
 import com.delivery.order.mapper.OrderMapper;
 import com.delivery.order.repo.OrderRepository;
@@ -29,6 +30,7 @@ public class OrderEntityService {
         Address address = addressMapper.mapToAddress(orderBody.getPerformOrderRequest().address());
 
         Order order = Order.builder()
+                .orderStatus(OrderStatus.ACCEPTED)
                 .email(orderBody.getEmail())
                 .totalPrice(orderBody.getPrice())
                 .userLastName(orderBody.getPerformOrderRequest().userFirstname())
@@ -37,7 +39,7 @@ public class OrderEntityService {
                 .build();
 
 
-        order.setOrderedProducts(orderMapper.mapToOrderedProduct(orderBody.getPerformOrderRequest().orderProductRequests(), order));
+        order.setOrderedProducts(orderMapper.mapToOrderedProduct(orderBody.getPerformOrderRequest().orderProductDtos(), order));
         address.setOrder(order);
         return order;
     }

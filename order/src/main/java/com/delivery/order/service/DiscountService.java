@@ -1,6 +1,6 @@
 package com.delivery.order.service;
 
-import com.delivery.order.dto.OrderProductRequest;
+import com.delivery.order.dto.product.OrderProductDto;
 import com.delivery.order.service.impl.order.SimpleOrderProcessor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class DiscountService {
 
-    public BigDecimal calculateTotalPrice(List<OrderProductRequest> order, SimpleOrderProcessor.BonusWriteOff bonusWriteOff) {
+    public BigDecimal calculateTotalPrice(List<OrderProductDto> order, SimpleOrderProcessor.BonusWriteOff bonusWriteOff) {
 
         BigDecimal generalPrice = order.stream()
                 .map(product -> product.price().multiply(BigDecimal.valueOf(product.amount())))

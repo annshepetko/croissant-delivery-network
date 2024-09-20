@@ -37,9 +37,9 @@ public class SecurityFilterChain {
                 })
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.GET ,"/api/v1/user/is-registered").permitAll()
-                                .requestMatchers("/api/say").hasRole(Roles.CUSTOMER.name())
+                                .requestMatchers("/api/user/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.GET ,"/api/user/is-registered").permitAll()
+                                .requestMatchers(HttpMethod.GET ,"/api/admin/is-admin").permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )

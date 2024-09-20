@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.util.Optional;
 
 
-@FeignClient(name = "USER-SERVICE", url = "http://localhost:8080")
+@FeignClient(name = "USER-SERVICE")
 public interface OrderClient {
 
-    @GetMapping("/api/v1/user/is-registered")
+    @GetMapping("/api/user/is-registered")
     ResponseEntity<Optional<UserDto>> getUserId(@RequestHeader("Authorization") String token);
 
 }

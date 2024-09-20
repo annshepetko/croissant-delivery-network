@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
-@FeignClient(name = "ORDER-SERVICE", url = "http://localhost:8060", configuration = OrderFeignConfiguration.class)
+@FeignClient(name = "ORDER-SERVICE", configuration = OrderFeignConfiguration.class)
 public interface OrderDataClient {
 
-    @GetMapping("/api/order/all/{name}")
+    @GetMapping("/api/v1/order/user/all/{name}")
     ResponseEntity<Optional<Page<OrderDto>>> getAllUserOrders(
             @PathVariable("name") String username,
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer page,

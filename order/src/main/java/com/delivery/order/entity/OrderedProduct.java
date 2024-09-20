@@ -24,7 +24,7 @@ public class OrderedProduct {
     private Long productId;
     private BigDecimal price;
 
-    private Integer categoryId;
+    private String categoryId;
 
     private int amount;
 

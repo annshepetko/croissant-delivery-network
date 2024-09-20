@@ -1,7 +1,8 @@
-package com.delivery.order.dto;
+package com.delivery.order.dto.address;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 
 import java.io.Serializable;
 
@@ -10,8 +11,10 @@ import java.io.Serializable;
  */
 
 @Valid
+@Builder
 public record AddressDto(
 
+        Long id,
         String city,
         String district,
         String street,

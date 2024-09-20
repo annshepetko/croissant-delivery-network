@@ -1,7 +1,8 @@
 package com.delivery.order.mapper;
 
-import com.delivery.order.dto.OrderProductRequest;
+import com.delivery.order.dto.product.OrderProductDto;
 import com.delivery.order.dto.PerformOrderRequest;
+import com.delivery.order.dto.user.OrderPageUserDto;
 import com.delivery.order.entity.Order;
 import com.delivery.order.entity.OrderedProduct;
 import lombok.Builder;
@@ -16,29 +17,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderMapper {
 
-    public List<OrderedProduct> mapToOrderedProduct(List<OrderProductRequest> requestList, Order order){
+    public List<OrderedProduct> mapToOrderedProduct(List<OrderProductDto> requestList, Order order){
         return requestList.stream()
                 .map(e -> OrderedProduct.builder()
                         .productId(e.productId())
                         .name(e.name())
                         .price(e.price())
                         .amount(e.amount())
-                        .categoryId(e.categoryId())
+                        .categoryId(e.categoryName())
                         .order(order)
                         .build())
                 .toList();
     }
 
-    public List<OrderProductRequest> mapToOrderedProductRequests(List<OrderedProduct> requestList){
+    public List<OrderProductDto> mapToOrderedProductRequests(List<OrderedProduct> requestList){
         return requestList.stream()
-                .map(e -> OrderProductRequest.builder()
+                .map(e -> OrderProductDto.builder()
                         .productId(e.getProductId())
                         .name(e.getName())
                         .price(e.getPrice())
                         .amount(e.getAmount())
-                        .categoryId(e.getCategoryId())
+                        .categoryName(e.getCategoryId())
                         .build())
                 .toList();
+    }
+
+    public OrderPageUserDto mapToOrderPageUserDto(Order order) {
+
+        return OrderPageUserDto.builder()
+                .id(order.getId())
+                .createdAt(order.getCreatedAt())
+                .products(mapToOrderedProductRequests(order.getOrderedProducts()))
+                .totalPrice(order.getTotalPrice())
+                .status(order.getOrderStatus())
+                .build();
     }
 
     @Builder

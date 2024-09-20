@@ -1,4 +1,4 @@
-package com.delivery.order.dto;
+package com.delivery.order.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Builder
 @Valid
-public record OrderProductRequest (
+public record OrderProductDto(
 
         @JsonProperty(value = "id")
         Long productId,
@@ -18,7 +18,8 @@ public record OrderProductRequest (
         @Size(min = 3, max = 65, message = "Name is too small")
         String name,
 
-        Integer categoryId,
+        @JsonProperty(value = "category")
+        String categoryName,
 
         @Positive(message = "Price must be greater than zero")
         BigDecimal price,

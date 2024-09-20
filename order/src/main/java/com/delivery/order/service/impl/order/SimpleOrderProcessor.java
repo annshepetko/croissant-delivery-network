@@ -27,7 +27,7 @@ public class SimpleOrderProcessor implements OrderProcessor {
 
         BonusWriteOff bonuses = buildBonusWriteOff(performOrderRequest);
 
-        BigDecimal discountedOrderPrice = discountService.calculateTotalPrice(performOrderRequest.orderProductRequests(), bonuses);
+        BigDecimal discountedOrderPrice = discountService.calculateTotalPrice(performOrderRequest.orderProductDtos(), bonuses);
         OrderMapper.OrderBody orderBody = new OrderMapper.OrderBody(performOrderRequest, user.get().email(), discountedOrderPrice);
 
         return orderEntityService.saveOrder(orderBody);

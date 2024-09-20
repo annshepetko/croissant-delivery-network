@@ -1,6 +1,6 @@
 package com.delivery.order.kafka.notification;
 
-import com.delivery.order.dto.OrderProductRequest;
+import com.delivery.order.dto.product.OrderProductDto;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ public record EmailNotification(
 
         BigDecimal totalPrice,
         Long orderId,
-        List<OrderProductRequest> products,
+        List<OrderProductDto> products,
         String email
 
 ){

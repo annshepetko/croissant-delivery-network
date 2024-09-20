@@ -1,0 +1,39 @@
+spring:
+  application:
+      loadbalancer:
+        ribbon:
+          enabled: false
+      name: gateway
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/user/auth/**
+            - Path=/api/user/
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/user/**
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/v1/order/**
+
+        - id: service-admin
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/order/admin/**
+          filters:
+            - name: AdminRoleFilter
+server:
+  port: 9000
+
+logging:
+  level:
+    com.delivery.gateway.filters.AdminRoleFilter: INFO

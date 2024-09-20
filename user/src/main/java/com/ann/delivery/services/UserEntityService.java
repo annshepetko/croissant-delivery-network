@@ -2,6 +2,7 @@ package com.ann.delivery.services;
 
 import com.ann.delivery.UserRepository;
 import com.ann.delivery.entity.User;
+import com.ann.delivery.enums.Roles;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,12 @@ public class UserEntityService {
 
 
     private final UserRepository userRepository;
+
+    public boolean isUserAdmin(String username){
+        User user = getUserByEmail(username);
+
+        return user.getRole().equals(Roles.ADMIN);
+    }
 
     public User getUserByEmail(String email){
         return userRepository.findByEmail(email)

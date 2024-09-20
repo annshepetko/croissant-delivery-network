@@ -1,5 +1,6 @@
 package com.delivery.order.entity;
 
+import com.delivery.order.entity.status.OrderStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
@@ -50,6 +51,8 @@ public class Order {
     @Positive
     private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     private String email;
 }

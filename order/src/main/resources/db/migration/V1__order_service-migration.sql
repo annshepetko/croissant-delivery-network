@@ -26,6 +26,7 @@ create table orders
     total_price       DECIMAL,
     email             TEXT,
     address_id        BIGINT,
+    order_status       TEXT,
     CONSTRAINT address_fk FOREIGN KEY (address_id) REFERENCES address (id)
 );
 
@@ -34,7 +35,7 @@ create table ordered_products
     id          BIGINT PRIMARY KEY DEFAULT nextval('ordered_products_seq'),
     name        TEXT,
     price       DECIMAL,
-    category_id INT,
+    category_id TEXT,
     amount      INT,
     product_id  BIGINT,
     order_id    BIGINT,
