@@ -14,11 +14,11 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select new com.delivery.order.dto.user.OrderUserServiceDto(o.createdAt, o.id, o.totalPrice) from Order o where o.email = :email")
-    Optional<Page<OrderUserServiceDto>> findAllByEmail(String email, Pageable pageable);
+    Optional<Page<OrderUserServiceDto>> findAllByEmailAndMap(String email, Pageable pageable);
 
 
     @Query("select new com.delivery.order.dto.admin.OrderBaseDto(o.id, o.createdAt, o.totalPrice, o.orderStatus) from Order o where o.orderStatus = :status")
-    Optional<Page<OrderBaseDto>> findAllOrders(OrderStatus status, Pageable pageable);
+    Page<OrderBaseDto> findAllOrdersAndMapToOrderBase(OrderStatus status, Pageable pageable);
 
 
 

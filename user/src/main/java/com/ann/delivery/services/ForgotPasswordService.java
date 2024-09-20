@@ -7,6 +7,7 @@ import com.ann.delivery.kafka.provider.notification.NotificationSender;
 import com.ann.delivery.kafka.provider.notification.dto.UserForgotPasswordNotification;
 import com.ann.delivery.util.TokenEncryptionUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -63,7 +64,7 @@ public class ForgotPasswordService {
 
         }catch (ExpiredJwtException e){
             log.warn("EXPIRED JWT TOKEN:: " + token);
-            e.printStackTrace();
+            throw new JwtException("Your authentication token has expired");
         }
     }
 

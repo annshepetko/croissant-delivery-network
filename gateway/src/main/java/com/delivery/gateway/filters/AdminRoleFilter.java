@@ -1,6 +1,7 @@
 package com.delivery.gateway.filters;
 
 import com.delivery.gateway.openfeign.client.AdminRoleClient;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,10 @@ public class AdminRoleFilter extends AbstractGatewayFilterFactory<AdminRoleFilte
     private static final Logger logger = LoggerFactory.getLogger(AdminRoleFilter.class);
 
     @Autowired
-    public AdminRoleFilter( @Lazy AdminRoleClient adminRoleClient) {
+    public AdminRoleFilter(@Lazy AdminRoleClient adminRoleClient) {
         super(Config.class);
         this.adminRoleClient = adminRoleClient;
     }
-
 
 
     @Override
@@ -50,9 +50,26 @@ public class AdminRoleFilter extends AbstractGatewayFilterFactory<AdminRoleFilte
             boolean isAdmin = false;
             if (token != null && token.startsWith("Bearer ")) {
 
+                try {
+                    // Call the adminRoleClient to check if the user is an admin
+                    isAdmin = adminRoleClient.isUserAdmin(token);
+                    logger.info("STATE: " + isAdmin);
 
-                isAdmin = adminRoleClient.isUserAdmin(token);
-                logger.info("STATE: " + isAdmin);
+                } catch (FeignException ex) {
+                    if (ex.status() == 401) { // If the token has expired or is invalid
+                        logger.error("Unauthorized error: Token has expired or is invalid");
+
+                        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                        exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+                        String message = "{\"error\": \"Token expired or invalid. Please log in again.\"}";
+
+                        DataBufferFactory dataBufferFactory = exchange.getResponse().bufferFactory();
+                        DataBuffer dataBuffer = dataBufferFactory.wrap(message.getBytes());
+
+                        return exchange.getResponse().writeWith(Mono.just(dataBuffer));
+                    }
+                }
             }
 
             if (!isAdmin) {
@@ -71,9 +88,8 @@ public class AdminRoleFilter extends AbstractGatewayFilterFactory<AdminRoleFilte
             }
             return chain.filter(exchange);
 
-        },0);
+        }, 0);
     }
-
 
 
     public static class Config {

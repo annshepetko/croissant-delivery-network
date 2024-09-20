@@ -14,11 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserProductService {
 
+    private final ProductEntityService productEntityService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
 
     public ProductDto getProductById(Long id) {
-        var product = productRepository.findById(id).orElseThrow();
+        var product = productRepository.findById(id);
 
 
         return productMapper.convertToProductDto(product);

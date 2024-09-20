@@ -36,8 +36,8 @@ public class UserProductController {
     @GetMapping
     public ResponseEntity<Page<ProductDto>> getAll(
             @RequestParam(value = "categoryId", required = false, defaultValue = "1") Integer categoryId,
-            @RequestParam(value = "pageNumber", defaultValue = "0") Integer page,
-            @RequestParam(value = "pageSize", defaultValue  = "2") Integer size
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue  = "2") Integer size
     ){
         Pageable pageableToPass = PageRequest.of(page, size);
 

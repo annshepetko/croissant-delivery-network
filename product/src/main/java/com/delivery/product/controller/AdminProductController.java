@@ -20,6 +20,7 @@ public class AdminProductController {
 
     @PatchMapping("/{id}")
     public void updateProduct(@RequestBody ProductDto productDto, @PathVariable("id") Long id){
+
         adminProductService.patchProduct(productDto, id);
     }
 

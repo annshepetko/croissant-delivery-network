@@ -16,19 +16,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderUserService {
 
+    private final OrderEntityService orderEntityService;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
 
     public Optional<Page<OrderUserServiceDto>> getAllUserOrders(String name, Pageable pageable) {
 
-        var orders = orderRepository.findAllByEmail(name, pageable);
+        var orders = orderRepository.findAllByEmailAndMap(name, pageable);
 
         return orders;
     }
 
     public OrderPageUserDto getOrderPageForUser(Long orderId) {
 
-        Order order = orderRepository.findById(orderId).orElseThrow();
+        Order order = orderEntityService.findById(orderId);
 
         return orderMapper.mapToOrderPageUserDto(order);
     }
