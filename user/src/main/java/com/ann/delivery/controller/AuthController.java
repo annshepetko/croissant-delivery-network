@@ -9,8 +9,8 @@ import com.ann.delivery.services.AuthenticationService;
 import com.ann.delivery.services.ForgotPasswordService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +28,9 @@ public class AuthController {
             HttpServletResponse httpServletResponse
     ){
 
-        return ResponseEntity.ok().body(authenticationService.register(registerRequest, httpServletResponse));
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(authenticationService.register(registerRequest, httpServletResponse));
     }
 
     @PatchMapping("/refresh")
@@ -37,7 +39,7 @@ public class AuthController {
     }
     @PostMapping("/forgot")
     public void resetForgottenPassword(@RequestBody @Valid ForgotPasswordRequest forgotPasswordRequest){
-        forgotPasswordService.prepareResetPassword(forgotPasswordRequest);
+        forgotPasswordService.sendPasswordResetEmail(forgotPasswordRequest);
     }
 
     @PostMapping("/authenticate")

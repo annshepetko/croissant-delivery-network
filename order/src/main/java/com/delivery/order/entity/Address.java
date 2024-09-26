@@ -10,7 +10,8 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@ToString(exclude = "user")
+@ToString(exclude = "order")
+@Table(name = "address")
 public class Address {
 
     @Id
@@ -44,8 +45,10 @@ public class Address {
     private Order order;
 
     public void setOrder(Order order){
+
         order.setAddress(this);
         this.order = order;
+
     }
 
 }

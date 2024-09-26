@@ -12,4 +12,12 @@ public class CategoryMapper {
                 .name(category.getName())
                 .build();
     }
+
+    public Category convertToCategory(CategoryDto category) {
+
+        return Category.builder()
+                .id(category.id())
+                .name(category.name())
+                .build();
+    }
 }

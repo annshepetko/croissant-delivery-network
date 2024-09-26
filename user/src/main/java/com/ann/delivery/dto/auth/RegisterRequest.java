@@ -4,9 +4,11 @@ import com.ann.delivery.enums.Roles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import org.springframework.validation.annotation.Validated;
 
 
+@Builder
 public record RegisterRequest(
 
         @Size(min = 2, max = 10, message = "Name is too small")

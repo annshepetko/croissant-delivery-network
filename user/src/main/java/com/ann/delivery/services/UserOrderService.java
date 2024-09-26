@@ -1,5 +1,6 @@
 package com.ann.delivery.services;
 
+import com.ann.delivery.UserRepository;
 import com.ann.delivery.dto.order.UserOrderDto;
 import com.ann.delivery.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -16,24 +17,31 @@ public class UserOrderService {
     private final JwtService jwtService;
 
     private final UserEntityService userEntityService;
-    public Optional<UserOrderDto> getUserIdIfPresent(String token) {
-        User user = getUser(token);
-        log.info("user :: " + user.getEmail());
+
+    private final UserRepository userRepository;
+
+    public Optional<UserOrderDto> getUserOrderIfPresent(String token) {
+
+        Optional<User> user = userRepository.findByEmail(getUsername(token));
+
+        if (user.isPresent()){
+        log.info("user :: " + user.get().getEmail());
         return Optional.of(UserOrderDto.builder()
-                .bonuses(user.getBonuses())
-                .email(user.getEmail())
+                .bonuses(user.get().getBonuses())
+                .email(user.get().getEmail())
                 .build());
+        }
+        return Optional.of(null);
     }
 
-    public Double getUSerBonuses(String token) {
-        User user = getUser(token);
+    public Double getUserBonuses(String token) {
+        User user = userEntityService.getUserByEmail(getUsername(token));
         return user.getBonuses();
     }
 
-    private User getUser(String token){
-
-        String email = jwtService.extractUsername(token.substring(7));
-
-        return userEntityService.getUserByEmail(email);
+    private String getUsername(String token){
+        return jwtService.extractUsername(token.substring(7));
     }
+
+
 }

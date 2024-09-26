@@ -19,7 +19,8 @@ public class UserProductService {
     private final ProductRepository productRepository;
 
     public ProductDto getProductById(Long id) {
-        var product = productRepository.findById(id);
+
+        var product = productEntityService.getProductById(id);
 
 
         return productMapper.convertToProductDto(product);

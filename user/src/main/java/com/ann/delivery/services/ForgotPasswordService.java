@@ -37,7 +37,7 @@ public class ForgotPasswordService {
         return token;
     }
 
-    public void prepareResetPassword(ForgotPasswordRequest forgotPasswordRequest) {
+    public void sendPasswordResetEmail(ForgotPasswordRequest forgotPasswordRequest) {
 
         String email = forgotPasswordRequest.email();
         User user = userEntityService.getUserByEmail(email);
@@ -62,7 +62,7 @@ public class ForgotPasswordService {
             User user = userEntityService.getUserByEmail(email);
             user.setPassword(passwordEncoder.encode(resetPasswordRequest.password()));
 
-        }catch (ExpiredJwtException e){
+        }catch (JwtException e){
             log.warn("EXPIRED JWT TOKEN:: " + token);
             throw new JwtException("Your authentication token has expired");
         }

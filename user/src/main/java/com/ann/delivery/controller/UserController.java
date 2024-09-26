@@ -27,13 +27,13 @@ public class UserController {
 
     @GetMapping("/bonuses")
     public ResponseEntity<Double> getUserBonuses(@RequestHeader(HttpHeaders.AUTHORIZATION) String token ){
-        return ResponseEntity.ok(userOrderService.getUSerBonuses(token));
+        return ResponseEntity.ok(userOrderService.getUserBonuses(token));
     }
 
     @GetMapping("/is-registered")
     public ResponseEntity<Optional<UserOrderDto>> isUserRegistered(@RequestHeader("Authorization") String  token){
         log.info("token:: " + token);
-        Optional<UserOrderDto> user = userOrderService.getUserIdIfPresent(token);
+        Optional<UserOrderDto> user = userOrderService.getUserOrderIfPresent(token);
 
         return ResponseEntity.ok(user);
     }

@@ -14,28 +14,6 @@ public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final CategoryService categoryService;
 
-    public Product convertToProduct(ProductDto productDto){
-
-        return Product.builder()
-                .name(productDto.name())
-                .price(productDto.price())
-                .category(categoryService.findById(productDto.category().id()))
-                .description(productDto.description())
-                .photoUrl(productDto.photoUrl())
-                .build();
-    }
-
-    public void patchProduct(Product product, ProductDto productDto){
-
-        product.setCategory(categoryService.findById(productDto.category().id()));
-        product.setName(productDto.name());
-        product.setPrice(productDto.price());
-        product.setDescription(productDto.description());
-        product.setPhotoUrl(productDto.photoUrl());
-
-
-
-    }
 
     public ProductDto convertToProductDto(Product product) {
         return  ProductDto.builder()

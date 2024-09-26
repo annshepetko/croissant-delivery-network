@@ -1,6 +1,9 @@
 package com.delivery.product.services;
 
 import com.delivery.product.dto.ProductDto;
+import com.delivery.product.dto.admin.CreateProductRequest;
+import com.delivery.product.entity.Product;
+import com.delivery.product.mapper.AdminProductMapper;
 import com.delivery.product.mapper.ProductMapper;
 import com.delivery.product.repo.ProductRepository;
 
@@ -12,25 +15,40 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdminProductService {
 
+    private final CategoryService categoryService;
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
+    private final AdminProductMapper productMapper;
 
-    public void createProduct(ProductDto productDto) {
-        var product = productMapper.convertToProduct(productDto);
+    public void createProduct(CreateProductRequest createProductRequest) {
+
+        Product product = productMapper.convertToProduct(createProductRequest);
+
         productRepository.save(product);
-
     }
 
     @Transactional(readOnly = true)
     public void patchProduct(ProductDto productDto, Long id) {
         var currentProduct = productRepository.findById(id).orElseThrow();
 
-        productMapper.patchProduct(currentProduct, productDto);
+        patchProductState(currentProduct, productDto);
 
         productRepository.save(currentProduct);
+    }
+
+    public void patchProductState(Product product, ProductDto productDto){
+
+        product.setCategory(categoryService.findById(productDto.category().id()));
+        product.setName(productDto.name());
+        product.setPrice(productDto.price());
+        product.setDescription(productDto.description());
+        product.setPhotoUrl(productDto.photoUrl());
+
+
     }
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+
 }
