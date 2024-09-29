@@ -31,6 +31,18 @@ spring:
             - Path=/api/order/admin/**
           filters:
             - name: AdminRoleFilter
+
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/admin/**
+          filters:
+            - name: AdminRoleFilter
+
+        - id: product-service-user
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/user/**
 server:
   port: 9000
 

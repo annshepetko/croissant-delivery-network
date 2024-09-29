@@ -3,12 +3,14 @@ package com.delivery.order.dto.admin;
 import com.delivery.order.entity.status.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @SuperBuilder
+@Getter
 public class OrderBaseDto {
 
         @JsonProperty

@@ -17,7 +17,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
 @ToString(exclude = "address")
 public class Order {

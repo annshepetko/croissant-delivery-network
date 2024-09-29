@@ -10,7 +10,6 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableJpaAuditing
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class OrderApplication {
 

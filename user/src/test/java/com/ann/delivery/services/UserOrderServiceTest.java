@@ -1,71 +1,69 @@
 package com.ann.delivery.services;
 
+import com.ann.delivery.UserRepository;
 import com.ann.delivery.dto.order.UserOrderDto;
 import com.ann.delivery.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-
 class UserOrderServiceTest {
 
     @Mock
-    private JwtService jwtService;
+    private UserRepository userRepository;
 
     @Mock
     private UserEntityService userEntityService;
 
-    @InjectMocks
+    @InjectMocks // This will automatically initialize userOrderService with the mocks
     private UserOrderService userOrderService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this); // Initialize mocks before each test
     }
 
     @Test
-    void getUserIdIfPresent() {
-
-        String token = "Bearer test.jwt.token";
+    void getUserOrderIfPresent() {
         String email = "test@example.com";
 
-        User user = new User();
-        user.setEmail(email);
-        user.setBonuses(50.0);
+        User user = User.builder()
+                .email(email)
+                .bonuses(50.0)
+                .build();
 
-        when(jwtService.extractUsername(token)).thenReturn(email);
-        when(userEntityService.getUserByEmail(email)).thenReturn(user);
+        // Mock the behavior of userRepository
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
-        Optional<UserOrderDto> result = userOrderService.getUserOrderIfPresent(token);
+        // Call the method under test
+        Optional<UserOrderDto> result = userOrderService.getUserOrderIfPresent(email);
 
+        // Assertions
         assertTrue(result.isPresent());
         assertEquals(email, result.get().email());
         assertEquals(50.0, result.get().bonuses());
 
-        verify(jwtService, times(1)).extractUsername(anyString());
-        verify(userEntityService, times(1)).getUserByEmail(email);
+        // Verify interactions
+        verify(userRepository, times(1)).findByEmail(email);
     }
 
     @Test
     void getUserBonuses() {
-
-        String token = "Bearer test.jwt.token";
         String email = "test@example.com";
 
         User user = new User();
-
         user.setEmail(email);
         user.setBonuses(40.0);
 
+        // Mock the behavior of userEntityService
         when(userEntityService.getUserByEmail(email)).thenReturn(user);
-        when(jwtService.extractUsername(token)).thenReturn(email);
 
-        assertEquals(user.getBonuses(), 40.0);
+        // Check bonuses
+        assertEquals(40.0, user.getBonuses());
     }
 }

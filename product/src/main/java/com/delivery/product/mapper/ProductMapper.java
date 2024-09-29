@@ -17,6 +17,7 @@ public class ProductMapper {
 
     public ProductDto convertToProductDto(Product product) {
         return  ProductDto.builder()
+                .id(product.getId())
                 .createdAt(product.getCreatedAt())
                 .category(categoryMapper.convertToDto(product.getCategory()))
                 .description(product.getDescription())

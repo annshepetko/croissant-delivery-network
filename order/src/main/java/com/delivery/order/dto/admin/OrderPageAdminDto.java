@@ -4,6 +4,7 @@ import com.delivery.order.dto.address.AddressDto;
 import com.delivery.order.dto.product.OrderProductDto;
 import com.delivery.order.entity.status.OrderStatus;
 import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @SuperBuilder
 @Data
+@Getter
 public class OrderPageAdminDto extends OrderBaseDto {
 
     private List<OrderProductDto> products;

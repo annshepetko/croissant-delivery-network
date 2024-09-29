@@ -2,6 +2,8 @@ package com.ann.delivery.controller;
 
 
 import com.ann.delivery.services.AdminService;
+import com.ann.delivery.services.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -22,9 +24,11 @@ public class AdminController {
     public final AdminService adminService;
 
     @GetMapping("/is-admin")
-    public Boolean isAdmin(@RequestHeader(HttpHeaders.AUTHORIZATION) String token){
-        log.info("TOKEN :: " + token);
-        Boolean state = adminService.isUserAdmin(token);
+    public Boolean isAdmin(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, HttpServletRequest request){
+
+        String username = (String) request.getAttribute("username");
+
+        Boolean state = adminService.isUserAdmin(username);
         return state;
     }
 }

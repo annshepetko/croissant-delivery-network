@@ -1,8 +1,8 @@
 package com.ann.delivery.controller;
 
-
 import com.ann.delivery.dto.order.UserOrderDto;
 import com.ann.delivery.dto.profile.UserProfilePage;
+import com.ann.delivery.entity.User;
 import com.ann.delivery.services.UserOrderService;
 import com.ann.delivery.services.UserPageService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -26,30 +26,44 @@ public class UserController {
     private final UserPageService userPageService;
 
     @GetMapping("/bonuses")
-    public ResponseEntity<Double> getUserBonuses(@RequestHeader(HttpHeaders.AUTHORIZATION) String token ){
-        return ResponseEntity.ok(userOrderService.getUserBonuses(token));
+    public ResponseEntity<Double> getUserBonuses(HttpServletRequest request) {
+        log.info("Request to get user bonuses received");
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        double bonuses = userOrderService.getUserBonuses(user);
+
+        log.info("Bonuses for user {}: {}", user.getEmail(), bonuses);
+        return ResponseEntity.ok(bonuses);
     }
 
     @GetMapping("/is-registered")
-    public ResponseEntity<Optional<UserOrderDto>> isUserRegistered(@RequestHeader("Authorization") String  token){
-        log.info("token:: " + token);
-        Optional<UserOrderDto> user = userOrderService.getUserOrderIfPresent(token);
+    public ResponseEntity<Optional<UserOrderDto>> isUserRegistered(HttpServletRequest request) {
+        log.info("Checking if user is registered...");
 
-        return ResponseEntity.ok(user);
+        String username = (String) request.getAttribute("username");
+        Optional<UserOrderDto> userOrderDto = userOrderService.getUserOrderIfPresent(username);
+
+        if (userOrderDto.isPresent()) {
+            log.info("User {} is registered", username);
+        } else {
+            log.warn("User {} is not registered", username);
+        }
+
+        return ResponseEntity.ok(userOrderDto);
     }
-
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfilePage> getUserProfile(
-
-            HttpServletRequest httpServletRequest,
+            HttpServletRequest request,
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer page,
-            @RequestParam(value = "pageSize", defaultValue  = "2") Integer size
-    ){
+            @RequestParam(value = "pageSize", defaultValue = "2") Integer size) {
 
-        Pageable pageableToPass = PageRequest.of(page, size);
+        log.debug("Request to get user profile page {} with size {}", page, size);
 
-        return ResponseEntity.ok(userPageService.getUserProfile(httpServletRequest, pageableToPass));
+        Pageable pageable = PageRequest.of(page, size);
+        UserProfilePage profilePage = userPageService.getUserProfile(request, pageable);
+
+        log.debug("Profile page retrieved for user: {}", request.getAttribute("username"));
+        return ResponseEntity.ok(profilePage);
     }
-
 }

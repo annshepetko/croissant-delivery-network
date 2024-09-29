@@ -4,44 +4,46 @@ import com.ann.delivery.UserRepository;
 import com.ann.delivery.dto.order.UserOrderDto;
 import com.ann.delivery.entity.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class UserOrderService {
 
-    private final JwtService jwtService;
-
-    private final UserEntityService userEntityService;
-
+    private static final Logger log = LoggerFactory.getLogger(UserOrderService.class);
     private final UserRepository userRepository;
 
-    public Optional<UserOrderDto> getUserOrderIfPresent(String token) {
+    public Optional<UserOrderDto> getUserOrderIfPresent(String username) {
 
-        Optional<User> user = userRepository.findByEmail(getUsername(token));
+        log.debug("Searching for user by username: {}", username);
 
-        if (user.isPresent()){
-        log.info("user :: " + user.get().getEmail());
-        return Optional.of(UserOrderDto.builder()
-                .bonuses(user.get().getBonuses())
-                .email(user.get().getEmail())
-                .build());
+        Optional<User> userOpt = userRepository.findByEmail(username);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            log.info("User found: {}", user.getEmail());
+
+            UserOrderDto userOrderDto = UserOrderDto.builder()
+                    .bonuses(user.getBonuses())
+                    .email(user.getEmail())
+                    .build();
+
+            log.debug("UserOrderDto created for user: {}", user.getEmail());
+            return Optional.of(userOrderDto);
+        } else {
+            log.warn("User not found: {}", username);
+            return Optional.empty();
         }
-        return Optional.of(null);
     }
 
-    public Double getUserBonuses(String token) {
-        User user = userEntityService.getUserByEmail(getUsername(token));
-        return user.getBonuses();
+    public Double getUserBonuses(User user) {
+        log.debug("Fetching bonuses for user: {}", user.getEmail());
+        Double bonuses = user.getBonuses();
+        log.info("User {} has bonuses: {}", user.getEmail(), bonuses);
+        return bonuses;
     }
-
-    private String getUsername(String token){
-        return jwtService.extractUsername(token.substring(7));
-    }
-
-
 }

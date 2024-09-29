@@ -4,6 +4,8 @@ import com.delivery.notification.dto.mail.EmailNotification;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,8 +13,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 @RequiredArgsConstructor
-public abstract class NotificationService <T extends EmailNotification> {
+public abstract class NotificationService<T extends EmailNotification> {
 
+    private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -26,16 +29,13 @@ public abstract class NotificationService <T extends EmailNotification> {
 
     protected abstract String getSubject();
 
-
-
     public void sendEmail(T message) throws MessagingException {
+        logger.info("Preparing to send email to: {}", message.getEmail());
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
         Context context = new Context();
-
         setContextVariables(context, message);
 
         String processedHtml = templateEngine.process(getTemplate(), context);
@@ -46,9 +46,6 @@ public abstract class NotificationService <T extends EmailNotification> {
         mimeMessageHelper.setSubject(getSubject());
 
         javaMailSender.send(mimeMessage);
-
-
+        logger.info("Email sent successfully to: {}", message.getEmail());
     }
-
-
 }

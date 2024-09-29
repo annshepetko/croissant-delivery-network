@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -60,6 +61,7 @@ public class OrderMapper {
         Address address = addressMapper.mapToAddress(orderBody.getPerformOrderRequest().address());
 
         Order order = Order.builder()
+                .createdAt(LocalDateTime.now())
                 .orderStatus(OrderStatus.ACCEPTED)
                 .email(orderBody.getEmail())
                 .totalPrice(orderBody.getPrice())

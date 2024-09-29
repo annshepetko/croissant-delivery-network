@@ -40,8 +40,11 @@ public class OrderService {
         log.info("USER_EMAIL : " + user);
 
         if (user.isPresent()) {
+            log.info("Authorized handler executing");
             orderProcessor.processOrder(performOrderRequest, user);
         } else {
+
+            log.info("Unauthorized handler executing");
             simpleOrderProcessor.processOrder(performOrderRequest, user);
         }
     }

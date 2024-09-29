@@ -12,11 +12,8 @@ import java.util.Optional;
 public class AdminService {
 
     private final UserEntityService userEntityService;
-    private final JwtService jwtService;
 
-    public Boolean isUserAdmin(String token){
-
-        String username = jwtService.extractUsername(token.substring(7));
+    public Boolean isUserAdmin(String username){
 
         log.info("USER-ADMIN-NAME:: " + username);
         return userEntityService.isUserAdmin(username);

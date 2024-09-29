@@ -26,11 +26,13 @@ public class UserPageService {
         
         User user = (User) request.getAttribute("user");
 
+        log.info("FETCHING USER`S ORDERS");
         Page<OrderDto> userOrders = orderDataClient.getAllUserOrders(user.getUsername(),
                 pageable.getPageNumber(),
                 pageable.getPageSize()
         ).getBody().get();
 
+        log.info("USER`S ORDERS RESPONSE : {}", userOrders);
 
         return userPageMapper.buildUserProfile(user, userOrders);
     }

@@ -1,6 +1,5 @@
 package com.ann.delivery.services;
 
-import com.ann.delivery.UserRepository;
 import com.ann.delivery.dto.auth.AuthenticationRequest;
 import com.ann.delivery.dto.auth.AuthenticationResponse;
 import com.ann.delivery.dto.auth.RegisterRequest;
@@ -8,10 +7,11 @@ import com.ann.delivery.entity.User;
 import com.ann.delivery.factory.CookieFactory;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,25 +26,29 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserEntityService userEntityService;
 
-    public AuthenticationResponse register(RegisterRequest request, HttpServletResponse httpServletResponse) {
+    public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
+        logger.info("Attempting to register user: {}", request.email());
 
-        if(userEntityService.isUserAlreadyRegistered(request.email())){
-
-            throw new EntityExistsException("User already registered");
+        if (userEntityService.isUserAlreadyRegistered(request.email())) {
+            logger.error("User already registered: {} at {}", request.email(), LocalDateTime.now());
+            throw new EntityExistsException("User already registered: " + request.email());
         }
-        User userDetails = (User) buildUserModel(request);
 
-        return authDispatcher(userDetails, httpServletResponse);
+        User newUser = buildUser(request);
+        logger.info("User built for registration: {}", newUser.getEmail());
 
+        return performAuthentication(newUser, response);
     }
 
-    private UserDetails buildUserModel(RegisterRequest request) {
-        UserDetails userDetails = User.builder()
+    private User buildUser(RegisterRequest request) {
+        return User.builder()
                 .createdAt(LocalDateTime.now())
                 .email(request.email())
                 .firstname(request.firstname())
@@ -52,70 +56,76 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.password()))
                 .role(request.role())
                 .build();
-        return userDetails;
     }
 
-    private AuthenticationResponse authDispatcher(User user, HttpServletResponse httpServletResponse) {
-
+    private AuthenticationResponse performAuthentication(User user, HttpServletResponse response) {
+        logger.info("Saving new user: {}", user.getEmail());
         userEntityService.saveUser(user);
 
         String accessToken = jwtService.generateToken(new HashMap<>(), user);
         String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
 
-        Cookie cookie = CookieFactory.createRefreshTokenCookie(refreshToken);
+        Cookie refreshTokenCookie = CookieFactory.createRefreshTokenCookie(refreshToken);
+        addCookieToResponse(response, refreshTokenCookie);
 
-        setCookieToResponse(httpServletResponse, cookie);
-
+        logger.info("Generated access and refresh tokens for user: {}", user.getEmail());
         return new AuthenticationResponse(accessToken);
-    }
-
-    private static void setCookieToResponse(HttpServletResponse httpServletResponse, Cookie cookie) {
-        httpServletResponse.addCookie(cookie);
     }
 
     public AuthenticationResponse refreshAccessToken(String refreshToken) {
-        String username = null;
+        logger.info("Refreshing access token at {}", LocalDateTime.now());
 
+        String username;
         try {
-            if (!jwtService.isTokenExpired(refreshToken)) {
-                username = jwtService.extractUsername(refreshToken);
+            if (jwtService.isTokenExpired(refreshToken)) {
+                logger.warn("Refresh token expired at {}", LocalDateTime.now());
+                throw new ExpiredJwtException(null, null, "Refresh token expired");
             }
-
+            username = jwtService.extractUsername(refreshToken);
         } catch (ExpiredJwtException e) {
-            throw new SessionAuthenticationException("Session has expired");
+            logger.error("Refresh token expired: {} at {}", refreshToken, LocalDateTime.now());
+            throw new SessionAuthenticationException("Session expired, please login again");
+        } catch (Exception e) {
+            logger.error("Error while refreshing access token at {}: {}", LocalDateTime.now(), e.getMessage());
+            throw new SessionAuthenticationException("Invalid refresh token");
         }
-        UserDetails user = userEntityService.getUserByEmail(username);
-        String accessToken = jwtService.generateToken(new HashMap<>(), user);
 
-        return new AuthenticationResponse(accessToken);
+        UserDetails userDetails = userEntityService.getUserByEmail(username);
+        String newAccessToken = jwtService.generateToken(new HashMap<>(), userDetails);
+
+        logger.info("New access token generated for user: {}", username);
+        return new AuthenticationResponse(newAccessToken);
     }
 
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
+        logger.info("Authenticating user: {}", request.email());
+        authenticateUser(request.email(), request.password());
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest, HttpServletResponse httpServletResponse) {
-
-        authenticateUser(authenticationRequest.email(), authenticationRequest.password());
-
-        UserDetails userDetails = userEntityService.getUserByEmail(authenticationRequest.email());
-
+        UserDetails userDetails = userEntityService.getUserByEmail(request.email());
         String accessToken = jwtService.generateToken(new HashMap<>(), userDetails);
         String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), userDetails);
 
-        Cookie refreshCookie = CookieFactory.createRefreshTokenCookie(refreshToken);
+        Cookie refreshTokenCookie = CookieFactory.createRefreshTokenCookie(refreshToken);
+        addCookieToResponse(response, refreshTokenCookie);
 
-        setCookieToResponse(httpServletResponse, refreshCookie);
-
+        logger.info("Authentication successful for user: {}", request.email());
         return new AuthenticationResponse(accessToken);
-
     }
 
     private void authenticateUser(String email, String password) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        email,
-                        password
-                )
-
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+            logger.info("User authenticated: {}", email);
+        } catch (Exception e) {
+            logger.error("Authentication failed for user: {} at {}", email, LocalDateTime.now());
+            throw new SessionAuthenticationException("Invalid credentials");
+        }
     }
 
+    private void addCookieToResponse(HttpServletResponse response, Cookie cookie) {
+        response.addCookie(cookie);
+        logger.debug("Added cookie to response: {}", cookie.getName());
+    }
 }

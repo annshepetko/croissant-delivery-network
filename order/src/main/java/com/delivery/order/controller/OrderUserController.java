@@ -4,7 +4,6 @@ package com.delivery.order.controller;
 import com.delivery.order.dto.user.OrderPageUserDto;
 import com.delivery.order.dto.user.OrderUserServiceDto;
 import com.delivery.order.service.OrderUserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
