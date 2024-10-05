@@ -5,7 +5,7 @@ spring:
           enabled: false
       name: gateway
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
 
   cloud:
     gateway:
@@ -45,6 +45,11 @@ spring:
             - Path=/api/products/user/**
 server:
   port: 9000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
 
 logging:
   level:

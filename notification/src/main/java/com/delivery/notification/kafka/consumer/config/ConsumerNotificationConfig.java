@@ -27,6 +27,9 @@ public class ConsumerNotificationConfig {
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
 
+    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    private String bootstrapServer;
+
     @Bean
     public ConsumerFactory<String, OrderConfirmationKafkaMessage> consumerEmailNotificationFactory(){
 
@@ -45,7 +48,7 @@ public class ConsumerNotificationConfig {
 
         configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServer);
         configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         return configs;
     }
@@ -76,7 +79,7 @@ public class ConsumerNotificationConfig {
     public Map<String, Object> consumerUserResetPasswordEmailConfigs(){
         Map<String, Object> configs = new HashMap<>();
 
-        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServer);
         configs.put(ConsumerConfig.GROUP_ID_CONFIG,"user-forgot-id");
 
         return configs;

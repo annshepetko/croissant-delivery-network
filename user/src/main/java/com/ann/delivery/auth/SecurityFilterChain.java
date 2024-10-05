@@ -38,6 +38,7 @@ public class SecurityFilterChain {
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers("/api/user/auth/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                                 .requestMatchers(HttpMethod.GET ,"/api/user/is-registered").permitAll()
                                 .requestMatchers(HttpMethod.GET ,"/api/admin/is-admin").permitAll()
                                 .anyRequest()

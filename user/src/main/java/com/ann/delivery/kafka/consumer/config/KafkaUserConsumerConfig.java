@@ -22,6 +22,9 @@ import java.util.Map;
 public class KafkaUserConsumerConfig {
 
 
+    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
 
@@ -40,7 +43,7 @@ public class KafkaUserConsumerConfig {
     public Map<String, Object> consumerUserConfigs(){
         Map<String, Object> configs = new HashMap<>();
 
-        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServers);
         configs.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
         return configs;

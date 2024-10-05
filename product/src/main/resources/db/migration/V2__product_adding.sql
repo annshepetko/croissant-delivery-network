@@ -1,5 +1,5 @@
-INSERT into category (id, name) VALUES (1, "Круасани");
-INSERT into category (id, name) VALUES (2, "Напої");
+INSERT into category (id, name) VALUES (1, 'Круасани');
+INSERT into category (id, name) VALUES (2, 'Напої');
 
 INSERT INTO products (id, name, description, price, photo_url, category_id, created_at, updated_at)
 VALUES

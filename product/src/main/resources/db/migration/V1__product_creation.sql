@@ -1,5 +1,5 @@
 create table category(
-                         id BIGSERIAL PRIMARY KEY,
+                         id SERIAL PRIMARY KEY,
                          name TEXT NOT NULL
 );
 
@@ -10,7 +10,7 @@ CREATE TABLE products (
     description VARCHAR(100) NOT NULL,
     price DECIMAL(19, 2) CHECK (price > 0),
     photo_url VARCHAR(255),
-    category_id BIGINT REFERENCES category(id),
+    category_id INT REFERENCES category(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );

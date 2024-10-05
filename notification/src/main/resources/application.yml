@@ -1,6 +1,11 @@
 spring:
+  config:
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  kafka:
+    consumer:
+      group-id: notification-id
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
   mail:
-
     host: smtp.gmail.com
     port: 587
     username: lvivcroissaintspet@gmail.com
@@ -12,19 +17,9 @@ spring:
       mail.smtp.ssl.trust: smtp.gmail.com
   application:
     name: notification-service
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/notification
-    password: root
-    username: postgres
-  kafka:
-    consumer:
-      group-id: notification-id
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-  config:
-    import: optional:configserver:http://localhost:8888
 server:
   port: 8040
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}

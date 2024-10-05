@@ -113,7 +113,7 @@ class AuthenticationServiceTest {
             authenticationService.refreshAccessToken(refreshToken);
         });
 
-        assertEquals("Session has expired", sessionAuthenticationException.getMessage() );
+        assertEquals("Invalid refresh token", sessionAuthenticationException.getMessage() );
     }
 
 

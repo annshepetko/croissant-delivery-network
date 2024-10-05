@@ -29,7 +29,7 @@ public class UserController {
     public ResponseEntity<Double> getUserBonuses(HttpServletRequest request) {
         log.info("Request to get user bonuses received");
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) request.getAttribute("user");
         double bonuses = userOrderService.getUserBonuses(user);
 
         log.info("Bonuses for user {}: {}", user.getEmail(), bonuses);

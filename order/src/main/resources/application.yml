@@ -1,17 +1,24 @@
 spring:
   config:
-    import: optional:configserver:http://localhost:8888
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
   application:
     name: order-service
-  cloud:
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: validate
   datasource:
-    username: postgres
+    username: ann
     password: root
-    url: jdbc:postgresql://localhost:5432/orders
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/orders
     driver-class-name: org.postgresql.Driver
 server:
   port: 8060
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}

@@ -1,23 +1,29 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/delivery
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/delivery
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     username: ${DB_USER}
   kafka:
     consumer:
       group-id: user-id
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   config:
     import:
-    - optional:configserver:http://localhost:8888
+    - optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
     - classpath:secrets.yml
   application:
     name: user-service
 server:
   port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
 
 secrets:
   jwtSecret: ${JWT_SECRET}

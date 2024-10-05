@@ -20,12 +20,12 @@ class UserOrderServiceTest {
     @Mock
     private UserEntityService userEntityService;
 
-    @InjectMocks // This will automatically initialize userOrderService with the mocks
+    @InjectMocks
     private UserOrderService userOrderService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialize mocks before each test
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -37,18 +37,14 @@ class UserOrderServiceTest {
                 .bonuses(50.0)
                 .build();
 
-        // Mock the behavior of userRepository
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
-        // Call the method under test
         Optional<UserOrderDto> result = userOrderService.getUserOrderIfPresent(email);
 
-        // Assertions
         assertTrue(result.isPresent());
         assertEquals(email, result.get().email());
         assertEquals(50.0, result.get().bonuses());
 
-        // Verify interactions
         verify(userRepository, times(1)).findByEmail(email);
     }
 
@@ -60,10 +56,8 @@ class UserOrderServiceTest {
         user.setEmail(email);
         user.setBonuses(40.0);
 
-        // Mock the behavior of userEntityService
         when(userEntityService.getUserByEmail(email)).thenReturn(user);
 
-        // Check bonuses
         assertEquals(40.0, user.getBonuses());
     }
 }

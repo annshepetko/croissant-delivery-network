@@ -4,6 +4,7 @@ import com.delivery.order.kafka.notification.EmailNotification;
 import com.delivery.order.kafka.notification.UserNotification;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -17,6 +18,10 @@ import java.util.Map;
 @Configuration
 public class KafkaTemplateConfig {
 
+
+    @Value("${spring.kafka.consumer.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Bean
     public ProducerFactory<String, EmailNotification> producerEmailFactory() {
         JsonSerializer<EmailNotification> serializer = new JsonSerializer<>();
@@ -29,7 +34,7 @@ public class KafkaTemplateConfig {
 
         Map<String, Object> configs = new HashMap<>();
 
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServers);
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,  JsonSerializer.class);
 
@@ -38,8 +43,6 @@ public class KafkaTemplateConfig {
 
     @Bean
     public KafkaTemplate<String, EmailNotification> emailKafkaTemplate(){
-
-
 
         return new KafkaTemplate(producerEmailFactory());
     }
