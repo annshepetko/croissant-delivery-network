@@ -1,3 +1,8 @@
+create table category(
+                         id BIGSERIAL PRIMARY KEY,
+                         name TEXT NOT NULL
+);
+
 
 CREATE TABLE products (
     id BIGSERIAL PRIMARY KEY,
@@ -10,8 +15,4 @@ CREATE TABLE products (
     updated_at TIMESTAMP
 );
 
-create table category(
-                         id BIGSERIAL PRIMARY KEY,
-                         name TEXT NOT NULL
-);
 
