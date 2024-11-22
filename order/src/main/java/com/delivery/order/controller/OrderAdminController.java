@@ -7,6 +7,7 @@ import com.delivery.order.service.OrderAdminService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +51,7 @@ public class OrderAdminController {
 
         OrderPageAdminDto order = adminService.getOrderById(id);
         logger.debug("Order details: {}", order);
+
 
         return ResponseEntity.ok(order);
     }

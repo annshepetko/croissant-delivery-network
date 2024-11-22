@@ -1,6 +1,5 @@
 package com.ann.delivery.openFeign.client;
 
-
 import com.ann.delivery.dto.order.OrderDto;
 import com.ann.delivery.openFeign.client.config.OrderFeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @FeignClient(name = "ORDER-SERVICE", configuration = OrderFeignConfiguration.class)
-public interface OrderDataClient {
+public interface  OrderDataClient {
 
     @GetMapping("/api/v1/order/user/all/{name}")
     ResponseEntity<Optional<Page<OrderDto>>> getAllUserOrders(

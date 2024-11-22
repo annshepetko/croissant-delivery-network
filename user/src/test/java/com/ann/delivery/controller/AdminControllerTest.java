@@ -20,6 +20,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.Hashtable;
+import java.util.Iterator;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -43,6 +46,7 @@ class AdminControllerTest {
 
     @MockBean
     private AdminService adminService;
+
     @Test
     void isAdmin() throws Exception {
 
@@ -53,11 +57,9 @@ class AdminControllerTest {
 
         when(userEntityService.getUserByEmail(user.getEmail())).thenReturn(user);
         when(adminService.isUserAdmin(user.getEmail())).thenReturn(true);
-
         MockHttpServletRequestBuilder requestBuilder = get("/api/admin/is-admin")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer token") // Add the authorization token
                 .requestAttr("username", user.getEmail()); // Set the username attribute
-
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk()) // Expect 200 OK
                 .andExpect(content().string("true")); // Expect response content to be "true"

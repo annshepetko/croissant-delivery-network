@@ -16,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +59,6 @@ class ForgotPasswordServiceTest {
 
         User user = new User();
         user.setEmail(correctEmail);
-
         when(jwtService.generatePasswordRefreshToken(new HashMap<>(), user)).thenReturn(jwtToken);
         when(userEntityService.getUserByEmail(correctEmail)).thenReturn(user);
         when(tokenEncryptionUtil.encryptForgotPasswordToken(jwtToken)).thenReturn(encryptedToken);

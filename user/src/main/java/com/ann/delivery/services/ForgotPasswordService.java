@@ -36,14 +36,12 @@ public class ForgotPasswordService {
     public void sendPasswordResetEmail(ForgotPasswordRequest forgotPasswordRequest) {
         String email = forgotPasswordRequest.email();
         User user = userEntityService.getUserByEmail(email);
-
-        if (user == null) {
-            log.warn("User with email {} not found", email);
-            throw new IllegalArgumentException("User not found");
-        }
-
         String encryptedToken = tokenEncryptionUtil.encryptForgotPasswordToken(generateForgotPasswordJwtToken(user));
 
+        sendNotification(email, encryptedToken);
+    }
+
+    private void sendNotification(String email, String encryptedToken) {
         log.info("Sending password reset email to: {}", email);
         notificationSender.send(UserForgotPasswordNotification.builder()
                 .token(encryptedToken)
