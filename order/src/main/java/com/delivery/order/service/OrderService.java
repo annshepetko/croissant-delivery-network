@@ -3,7 +3,7 @@ package com.delivery.order.service;
 import com.delivery.order.dto.PerformOrderRequest;
 import com.delivery.order.openFeign.clients.OrderClient;
 import com.delivery.order.openFeign.dto.UserDto;
-import com.delivery.order.service.interfaces.OrderProcessor;
+import com.delivery.order.service.interfaces.OrderHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,20 +14,17 @@ import java.util.Optional;
 @Slf4j
 public class OrderService {
 
+
+    private final OrderHandler orderHandler;
     private final OrderClient orderClient;
 
-    @Qualifier
-    private final OrderProcessor orderProcessor;
-    private final OrderProcessor simpleOrderProcessor;
-
-    public OrderService(OrderClient orderClient,
-                        @Qualifier("authorizedOrderProcessor") OrderProcessor orderProcessor,
-                        @Qualifier("simpleOrderProcessor") OrderProcessor simpleOrderProcessor
-    ) {
+    public OrderService(OrderClient orderClient, @Qualifier("simpleOrderProcessor") OrderHandler orderHandler){
         this.orderClient = orderClient;
-        this.orderProcessor = orderProcessor;
-        this.simpleOrderProcessor = simpleOrderProcessor;
+        this.orderHandler = orderHandler;
     }
+
+
+
 
     private Optional<UserDto> getUser(String token) {
 
@@ -39,14 +36,7 @@ public class OrderService {
         Optional<UserDto> user = getUser(token);
         log.info("USER_EMAIL : " + user);
 
-        if (user.isPresent()) {
-            log.info("Authorized handler executing");
-            orderProcessor.processOrder(performOrderRequest, user);
-        } else {
-
-            log.info("Unauthorized handler executing");
-            simpleOrderProcessor.processOrder(performOrderRequest, user);
-        }
+        orderHandler.handle(performOrderRequest, user);
     }
 
 }
