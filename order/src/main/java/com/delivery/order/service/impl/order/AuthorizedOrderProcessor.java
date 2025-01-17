@@ -7,7 +7,6 @@ import com.delivery.order.kafka.notification.UserNotification;
 import com.delivery.order.mapper.NotificationBuilder;
 import com.delivery.order.openFeign.dto.UserDto;
 import com.delivery.order.service.interfaces.NotificationService;
-import com.delivery.order.service.interfaces.OrderHandler;
 import com.delivery.order.service.interfaces.OrderProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AuthorizedOrderProcessor extends OrderHandler implements OrderProcessor {
+public class AuthorizedOrderProcessor  implements OrderProcessor {
 
     private final NotificationService notificationService;
     private final SimpleOrderProcessor simpleOrderProcessor;
@@ -29,16 +28,10 @@ public class AuthorizedOrderProcessor extends OrderHandler implements OrderProce
             @Qualifier("simpleOrderProcessor") OrderProcessor simpleOrderProcessor,
             NotificationBuilder notificationBuilder
     ) {
-        super(null);
         this.notificationService = notificationService;
         this.simpleOrderProcessor = (SimpleOrderProcessor) simpleOrderProcessor;
         this.notificationBuilder = notificationBuilder;
         this.userNotificationService = userNotificationService;
-    }
-
-    @Override
-    public void handle(PerformOrderRequest performOrderRequest, Optional<UserDto> userDto) {
-        processOrder(performOrderRequest, userDto);
     }
 
     @Override
@@ -55,6 +48,7 @@ public class AuthorizedOrderProcessor extends OrderHandler implements OrderProce
 
         return order;
     }
+
 
 
 
