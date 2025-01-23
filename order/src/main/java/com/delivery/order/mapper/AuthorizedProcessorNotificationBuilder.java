@@ -6,11 +6,16 @@ import com.delivery.order.kafka.notification.UserNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
-public class NotificationBuilder {
+public class AuthorizedProcessorNotificationBuilder {
 
     private final OrderMapper orderMapper;
+
+
 
     public EmailNotification buildOrderNotification(Order order){
 
