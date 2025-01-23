@@ -1,4 +1,5 @@
 spring:
+
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/delivery
     password: ${DB_PASSWORD}
@@ -17,6 +18,10 @@ spring:
     - classpath:secrets.yml
   application:
     name: user-service
+  cloud:
+    config:
+      retry:
+        use-random-policy:
 server:
   port: 8080
 

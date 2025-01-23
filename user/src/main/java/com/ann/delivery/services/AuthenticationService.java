@@ -37,6 +37,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserEntityService userEntityService;
     private final AuthenticationTokenService authenticationTokenService ;
+    private final CookieService cookieService;
 
     public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
         logger.info("Attempting to register user: {}", request.email());
@@ -54,7 +55,8 @@ public class AuthenticationService {
     private AuthenticationResponse performRegistration(User user, HttpServletResponse response) {
 
         User savedUser = userEntityService.saveUser(user);
-        Map<String, String> authTokens = generateTokens(response, savedUser);
+        Map<String, String> authTokens = generateTokens(savedUser);
+        authenticationTokenService.setRefreshTokenToCookie(response, authTokens.get("refreshToken"));
 
         return buildResponse(authTokens);
     }
@@ -64,7 +66,8 @@ public class AuthenticationService {
         performAuthentication(request.email(), request.password());
         User user = userEntityService.getUserByEmail(request.email());
 
-        Map<String, String> authTokens = generateTokens(response, user);
+        Map<String, String> authTokens = generateTokens(user);
+        authenticationTokenService.setRefreshTokenToCookie(response, authTokens.get("refreshToken"));
 
         logger.info("Authentication successful for user: {}", request.email());
         return buildResponse(authTokens);
@@ -88,10 +91,9 @@ public class AuthenticationService {
         }
     }
 
-    private Map<String, String> generateTokens(HttpServletResponse response, User user) {
+    private Map<String, String> generateTokens(User user) {
 
         Map<String, String> authTokens = authenticationTokenService.generateTokens(user);
-        authenticationTokenService.setRefreshTokenToCookie(response, authTokens.get("refreshToken"));
 
         return authTokens;
     }

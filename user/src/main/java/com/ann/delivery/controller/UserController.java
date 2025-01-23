@@ -59,9 +59,10 @@ public class UserController {
             @RequestParam(value = "pageSize", defaultValue = "2") Integer size) {
 
         log.debug("Request to get user profile page {} with size {}", page, size);
+        User user = (User) request.getAttribute("user");
 
         Pageable pageable = PageRequest.of(page, size);
-        UserProfilePage profilePage = userPageService.getUserProfile(request, pageable);
+        UserProfilePage profilePage = userPageService.getUserProfile(user, pageable);
 
         log.debug("Profile page retrieved for user: {}", request.getAttribute("username"));
         return ResponseEntity.ok(profilePage);

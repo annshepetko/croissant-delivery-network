@@ -25,6 +25,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+
     networks:
       - kafka_net
     restart: unless-stopped
@@ -45,6 +46,7 @@ services:
       - 8888:8888
 
   order:
+
     container_name: order-service
     environment:
       - POSTGRES_HOST=postgres
@@ -68,6 +70,10 @@ services:
 
   discovery:
     container_name: eureka-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     environment:
       - CONFIG_SERVER_URL=http://config-server:8888
     depends_on:
@@ -85,6 +91,10 @@ services:
       context: ./notification/
       dockerfile: Dockerfile
     container_name: notification-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     environment:
       - CONFIG_SERVER_URL=http://config-server:8888
       - EUREKA_SERVER_URL=http://discovery:8761/eureka/
@@ -100,6 +110,10 @@ services:
       - 8040:8040
   product:
     container_name: product-service
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     environment:
       - POSTGRES_HOST=postgres
       - CONFIG_SERVER_URL=http://config-server:8888
@@ -140,6 +154,10 @@ services:
       - postgres
   gateway:
     container_name: api-gateway
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     build:
       context: ./gateway/
       dockerfile: Dockerfile

@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/api/products/user")
 public class UserProductController {
 
@@ -37,7 +38,7 @@ public class UserProductController {
         return ResponseEntity.ok(productDto);
     }
 
-    @GetMapping("/category")
+    @GetMapping("/categories")
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
 
         logger.info("Fetching all categories");

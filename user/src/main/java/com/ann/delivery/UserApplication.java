@@ -12,7 +12,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.util.Base64;
 
-
 @Slf4j
 @EnableDiscoveryClient
 @SpringBootApplication

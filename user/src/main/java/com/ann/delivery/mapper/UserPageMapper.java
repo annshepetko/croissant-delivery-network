@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class UserPageMapper {
 
-    @Transactional
+
     public UserProfilePage buildUserProfile(User user, Page<OrderDto> orders){
 
         return UserProfilePage.builder()
