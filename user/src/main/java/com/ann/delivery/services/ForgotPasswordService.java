@@ -34,6 +34,7 @@ public class ForgotPasswordService {
     }
 
     public void sendPasswordResetEmail(ForgotPasswordRequest forgotPasswordRequest) {
+
         String email = forgotPasswordRequest.email();
         User user = userEntityService.getUserByEmail(email);
         String encryptedToken = tokenEncryptionUtil.encryptForgotPasswordToken(generateForgotPasswordJwtToken(user));
@@ -51,24 +52,25 @@ public class ForgotPasswordService {
 
     @Transactional
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+
         String token = resetPasswordRequest.token();
 
         log.debug("Decrypting reset password token");
         token = tokenEncryptionUtil.decryptForgotPasswordToken(token);
 
         log.debug("Decrypted JWT token: {}", token);
+        tryResetPassword(resetPasswordRequest, token);
+    }
+
+    private void tryResetPassword(ResetPasswordRequest resetPasswordRequest, String token) {
         try {
             String email = jwtService.extractUsername(token);
             User user = userEntityService.getUserByEmail(email);
 
-            if (user == null) {
-                log.warn("User with email {} not found during password reset", email);
-                throw new IllegalArgumentException("User not found");
-            }
-
             log.info("Resetting password for user: {}", email);
             user.setPassword(passwordEncoder.encode(resetPasswordRequest.password()));
             log.info("Password successfully reset for user: {}", email);
+            userEntityService.saveUser(user);
 
         } catch (ExpiredJwtException e) {
             log.warn("Expired JWT token: {}", token);

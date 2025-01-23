@@ -44,10 +44,11 @@ public class UserEntityService {
     }
 
 
-    public void saveUser(User user){
+    public User saveUser(User user){
 
         logger.info("SAVING USER");
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
+
 }

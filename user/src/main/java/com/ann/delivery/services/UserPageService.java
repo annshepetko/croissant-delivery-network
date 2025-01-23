@@ -21,10 +21,10 @@ public class UserPageService {
     private final OrderDataClient orderDataClient;
     private final UserPageMapper userPageMapper;
 
-    @Transactional
-    public UserProfilePage getUserProfile(HttpServletRequest request, Pageable pageable) {
+
+    public UserProfilePage getUserProfile(User user, Pageable pageable) {
         
-        User user = (User) request.getAttribute("user");
+
 
         log.info("FETCHING USER`S ORDERS");
         Page<OrderDto> userOrders = orderDataClient.getAllUserOrders(user.getUsername(),

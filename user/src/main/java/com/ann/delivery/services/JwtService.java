@@ -42,6 +42,18 @@ public class JwtService {
 
     }
 
+    public Map<String, String> buildTokens(UserDetails user) {
+        HashMap<String, String> tokens = new HashMap<>();
+
+        String accessToken = this.generateToken(new HashMap<>(), user);
+        String refreshToken = this.generateRefreshToken(new HashMap<>(), user);
+
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
+    }
+
     private String buildToken(Map<String, Object> credentials, UserDetails user, long expiration) {
         return Jwts.builder()
                 .addClaims(credentials)
