@@ -7,7 +7,6 @@ import com.ann.delivery.entity.User;
 import com.ann.delivery.factory.CookieFactory;
 import com.ann.delivery.mapper.UserMapper;
 import com.ann.delivery.services.auth.AuthenticationTokenService;
-import com.ann.delivery.services.auth.CookieService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.Cookie;
@@ -17,13 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -37,7 +33,6 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserEntityService userEntityService;
     private final AuthenticationTokenService authenticationTokenService ;
-    private final CookieService cookieService;
 
     public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
         logger.info("Attempting to register user: {}", request.email());
@@ -56,8 +51,7 @@ public class AuthenticationService {
 
         User savedUser = userEntityService.saveUser(user);
         Map<String, String> authTokens = generateTokens(savedUser);
-        authenticationTokenService.setRefreshTokenToCookie(response, authTokens.get("refreshToken"));
-
+        addRefreshTokenToResponse(authTokens.get("refreshToken"), response);
         return buildResponse(authTokens);
     }
 
@@ -67,7 +61,7 @@ public class AuthenticationService {
         User user = userEntityService.getUserByEmail(request.email());
 
         Map<String, String> authTokens = generateTokens(user);
-        authenticationTokenService.setRefreshTokenToCookie(response, authTokens.get("refreshToken"));
+        addRefreshTokenToResponse(authTokens.get("refreshToken"), response);
 
         logger.info("Authentication successful for user: {}", request.email());
         return buildResponse(authTokens);
@@ -129,8 +123,13 @@ public class AuthenticationService {
         }
     }
 
+    private void addRefreshTokenToResponse(String refreshToken, HttpServletResponse response){
+        Cookie cookie = CookieFactory.createRefreshTokenCookie(refreshToken);
+
+        response.addCookie(cookie);
+    }
+
     private AuthenticationResponse buildResponse(Map<String, String> authTokens) {
         return new AuthenticationResponse(authTokens.get("accessToken"));
     }
-
 }

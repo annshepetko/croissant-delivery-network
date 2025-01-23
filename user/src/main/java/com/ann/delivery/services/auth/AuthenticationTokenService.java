@@ -25,7 +25,6 @@ public class AuthenticationTokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationTokenService.class);
 
-    private final CookieService cookieService;
     private final JwtService jwtService;
     private final UserEntityService userEntityService;
 
@@ -47,10 +46,6 @@ public class AuthenticationTokenService {
         return authTokens;
     }
 
-    public void setRefreshTokenToCookie(HttpServletResponse response, String refreshToken) {
-        Cookie refreshTokenCookie = CookieService.createRefreshTokenCookie(refreshToken);
 
-        cookieService.addCookieToResponse(response, refreshTokenCookie);
-    }
 
 }
