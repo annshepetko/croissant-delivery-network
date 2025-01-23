@@ -34,6 +34,7 @@ public class AuthenticationService {
     private final UserEntityService userEntityService;
     private final AuthenticationTokenService authenticationTokenService ;
 
+    
     public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
         logger.info("Attempting to register user: {}", request.email());
 
@@ -50,8 +51,8 @@ public class AuthenticationService {
     private AuthenticationResponse performRegistration(User user, HttpServletResponse response) {
 
         User savedUser = userEntityService.saveUser(user);
-        Map<String, String> authTokens = generateTokens(savedUser);
-        addRefreshTokenToResponse(authTokens.get("refreshToken"), response);
+        Map<String, String> authTokens = authenticationTokenService.performTokensManaging(response, savedUser);
+
         return buildResponse(authTokens);
     }
 
@@ -60,12 +61,12 @@ public class AuthenticationService {
         performAuthentication(request.email(), request.password());
         User user = userEntityService.getUserByEmail(request.email());
 
-        Map<String, String> authTokens = generateTokens(user);
-        addRefreshTokenToResponse(authTokens.get("refreshToken"), response);
+        Map<String, String> authTokens = authenticationTokenService.performTokensManaging(response, user);
 
         logger.info("Authentication successful for user: {}", request.email());
         return buildResponse(authTokens);
     }
+
 
     private void performAuthentication(String email, String password) {
 
@@ -84,14 +85,6 @@ public class AuthenticationService {
             throw new SessionAuthenticationException("Invalid credentials");
         }
     }
-
-    private Map<String, String> generateTokens(User user) {
-
-        Map<String, String> authTokens = authenticationTokenService.generateTokens(user);
-
-        return authTokens;
-    }
-
 
     public AuthenticationResponse refreshAccessToken(String refreshToken) {
 
@@ -121,12 +114,6 @@ public class AuthenticationService {
             throw new SessionAuthenticationException("Invalid refresh token");
 
         }
-    }
-
-    private void addRefreshTokenToResponse(String refreshToken, HttpServletResponse response){
-        Cookie cookie = CookieFactory.createRefreshTokenCookie(refreshToken);
-
-        response.addCookie(cookie);
     }
 
     private AuthenticationResponse buildResponse(Map<String, String> authTokens) {

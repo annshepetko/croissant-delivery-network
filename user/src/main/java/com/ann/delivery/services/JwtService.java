@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.xml.crypto.Data;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ public class JwtService {
     private String secret;
 
 
-    public String generateToken(Map<String, Object > credentials, UserDetails user){
+    public String generateAccessToken(Map<String, Object > credentials, UserDetails user){
         return buildToken(credentials, user, this.accessTokenExpiration);
     }
 
@@ -45,7 +44,7 @@ public class JwtService {
     public Map<String, String> buildTokens(UserDetails user) {
         HashMap<String, String> tokens = new HashMap<>();
 
-        String accessToken = this.generateToken(new HashMap<>(), user);
+        String accessToken = this.generateAccessToken(new HashMap<>(), user);
         String refreshToken = this.generateRefreshToken(new HashMap<>(), user);
 
         tokens.put("accessToken", accessToken);

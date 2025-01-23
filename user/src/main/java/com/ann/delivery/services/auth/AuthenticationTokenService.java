@@ -2,17 +2,12 @@ package com.ann.delivery.services.auth;
 
 
 import com.ann.delivery.entity.User;
-import com.ann.delivery.factory.CookieFactory;
-import com.ann.delivery.mapper.UserMapper;
-import com.ann.delivery.services.AuthenticationService;
 import com.ann.delivery.services.JwtService;
 import com.ann.delivery.services.UserEntityService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +22,7 @@ public class AuthenticationTokenService {
 
     private final JwtService jwtService;
     private final UserEntityService userEntityService;
+    private final CookieAuthService cookieService;
 
 
     public String generateAccessToken(String username) {
@@ -34,7 +30,7 @@ public class AuthenticationTokenService {
         UserDetails userDetails = userEntityService.getUserByEmail(username);
 
         logger.info("New access token generated for user: {}", username);
-        return jwtService.generateToken(new HashMap<>(), userDetails);
+        return jwtService.generateAccessToken(new HashMap<>(), userDetails);
     }
 
     public Map<String, String> generateTokens(User user) {
@@ -46,6 +42,13 @@ public class AuthenticationTokenService {
         return authTokens;
     }
 
+    public Map<String, String> performTokensManaging(HttpServletResponse response, User user) {
 
+        Map<String, String> authTokens = generateTokens(user);
+
+        cookieService.addRefreshTokenToCookieResponse(authTokens.get("refreshToken"), response);
+
+        return authTokens;
+    }
 
 }

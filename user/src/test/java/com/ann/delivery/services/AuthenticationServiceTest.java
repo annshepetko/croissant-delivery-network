@@ -61,7 +61,7 @@ class AuthenticationServiceTest {
         when(userEntityService.isUserAlreadyRegistered(request.email())).thenReturn(false);
         when(passwordEncoder.encode(request.password())).thenReturn("encoded password");
 
-        when(jwtService.generateToken(any(HashMap.class), any(User.class))).thenReturn("accessToken");
+        when(jwtService.generateAccessToken(any(HashMap.class), any(User.class))).thenReturn("accessToken");
         when(jwtService.generateRefreshToken(any(HashMap.class), any(User.class))).thenReturn("refreshToken");
 
         Cookie cookie = CookieFactory.createRefreshTokenCookie("refreshToken");
@@ -96,7 +96,7 @@ class AuthenticationServiceTest {
         when(jwtService.isTokenExpired(refreshToken)).thenReturn(false);
         when(jwtService.extractUsername(refreshToken)).thenReturn(username);
         when(userEntityService.getUserByEmail(username)).thenReturn(userDetails);
-        when(jwtService.generateToken(any(), eq(userDetails))).thenReturn("newAccessToken");
+        when(jwtService.generateAccessToken(any(), eq(userDetails))).thenReturn("newAccessToken");
 
         AuthenticationResponse response = authenticationService.refreshAccessToken(refreshToken);
 
@@ -126,7 +126,7 @@ class AuthenticationServiceTest {
 
         when(authenticationManager.authenticate(any())).thenReturn(null); // Mock authentication
         when(userEntityService.getUserByEmail(request.email())).thenReturn(user);
-        when(jwtService.generateToken(any(), eq(user))).thenReturn("accessToken");
+        when(jwtService.generateAccessToken(any(), eq(user))).thenReturn("accessToken");
         when(jwtService.generateRefreshToken(any(), eq(user))).thenReturn("refreshToken");
 
         AuthenticationResponse response = authenticationService.authenticate(request, httpServletResponse);
