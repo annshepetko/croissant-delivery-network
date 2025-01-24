@@ -26,50 +26,18 @@ public class SimpleOrderProcessor  implements OrderProcessor {
     private final OrderEntityService orderEntityService;
 
     public SimpleOrderProcessor(DiscountService discountService, OrderEntityService orderEntityService) {
-        this.discountService = discountService;
         this.orderEntityService = orderEntityService;
+        this.discountService = discountService
     }
 
     @Override
-    public Order processOrder(PerformOrderRequest performOrderRequest, Optional<UserDto> user) {
+    public Order processOrder(PerformOrderRequest performOrderRequest) {
 
         logger.info("Staring to process the order");
+        BigDecimal price =
+        Order order =
 
-        BonusWriteOff bonuses = buildBonusWriteOff(performOrderRequest);
-
-        String email = user.map(UserDto::email).orElse("empty");
-
-        BigDecimal discountedOrderPrice = discountService.calculateTotalPrice(performOrderRequest.orderProductDtos(), bonuses);
-        OrderMapper.OrderBody orderBody = new OrderMapper.OrderBody(performOrderRequest, email, discountedOrderPrice);
-
-        return orderEntityService.saveOrder(orderBody);
+        return orderEntityService.saveOrder();
     }
 
-    public BonusWriteOff buildBonusWriteOff(PerformOrderRequest performOrderRequest) {
-
-
-        BonusWriteOff bonusWriteOff = new BonusWriteOff(
-                performOrderRequest.userBonuses(),
-                performOrderRequest.isWriteOffBonuses()
-        );
-        if (!bonusWriteOff.getIsWriteOff()){
-
-            bonusWriteOff.setBonuses(bonusWriteOff.getBonuses() + 2);
-            logger.info("Refreshing user bonuses");
-        }
-        return bonusWriteOff;
-    }
-
-    @Setter
-    @Getter
-    public static class BonusWriteOff {
-
-        public BonusWriteOff(Double bonuses, Boolean isWriteOff) {
-            this.bonuses = bonuses;
-            this.isWriteOff = isWriteOff;
-        }
-
-        private Double bonuses;
-        private Boolean isWriteOff;
-    }
 }

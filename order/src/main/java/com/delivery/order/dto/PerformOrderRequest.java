@@ -30,7 +30,6 @@ public record PerformOrderRequest (
         )
         @Size(min = 10, max = 10)
         String userPhoneNumber,
-
         AddressDto address,
 
         @JsonProperty(defaultValue = "0.0")

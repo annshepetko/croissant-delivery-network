@@ -16,7 +16,7 @@ import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
-public class AuthorizedOrderProcessor  implements OrderProcessor {
+public class AuthorizedOrderProcessor implements OrderProcessor {
 
     private final NotificationService notificationService;
     private final SimpleOrderProcessor simpleOrderProcessor;
