@@ -4,6 +4,8 @@ import com.delivery.order.dto.PerformOrderRequest;
 import com.delivery.order.entity.Order;
 import com.delivery.order.openFeign.clients.OrderClient;
 import com.delivery.order.openFeign.dto.UserDto;
+import com.delivery.order.service.factory.OrderProcessorFactory;
+import com.delivery.order.service.factory.impl.OrderProcessorFactoryImpl;
 import com.delivery.order.service.impl.order.AuthorizedOrderProcessor;
 import com.delivery.order.service.impl.order.SimpleOrderProcessor;
 import com.delivery.order.service.interfaces.OrderProcessor;
@@ -17,24 +19,12 @@ import java.util.Optional;
 @Slf4j
 public class OrderService {
 
-    private final OrderProcessor simpleOrderProcessor;
-    private final OrderProcessor authorizedOrderProcessor;
     private final OrderClient orderClient;
+    private OrderProcessorFactory orderProcessorFactory;
 
-    public OrderService(
-            OrderClient orderClient,
-            @Qualifier("simpleOrderProcessor")
-            OrderProcessor orderProcessor,
-            @Qualifier("authorizedOrderProcessor")
-            OrderProcessor authorizedOrderProcessor
-    ){
-        this.authorizedOrderProcessor = authorizedOrderProcessor;
-        this.simpleOrderProcessor = orderProcessor;
+    public OrderService(OrderClient orderClient){
         this.orderClient = orderClient;
     }
-
-
-
 
     private Optional<UserDto> getUser(String token) {
 
@@ -44,13 +34,11 @@ public class OrderService {
     public void performOrder(PerformOrderRequest performOrderRequest, String token) {
 
         Optional<UserDto> user = getUser(token);
-        if(user.isEmpty()){
-            simpleOrderProcessor.processOrder(performOrderRequest, user);
-        } else{
-            authorizedOrderProcessor.processOrder(performOrderRequest, user);
-        }
-        log.info("USER_EMAIL : " + user);
-
+        OrderProcessor orderProcessor = orderProcessorFactory.getOrderProcessor(user);
+        orderProcessor.processOrder(performOrderRequest, user);
     }
 
+    public void setOrderProcessorFactory(OrderProcessorFactoryImpl orderProcessorFactory) {
+        this.orderProcessorFactory = orderProcessorFactory;
+    }
 }
