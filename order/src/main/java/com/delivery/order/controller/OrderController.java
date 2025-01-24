@@ -1,6 +1,6 @@
 package com.delivery.order.controller;
 
-import com.delivery.order.dto.PerformOrderRequest;
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +20,16 @@ public class OrderController {
 
     @PostMapping
     public void orderProducts(
-            @RequestBody PerformOrderRequest performOrderRequest,
+            @RequestBody OrderRequest orderRequest,
             HttpServletRequest httpServletRequest
     ){
         String token = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
         logger.info("Received order request. Authorization token: {}", token != null ? "Present" : "Missing");
 
-        logger.debug("PerformOrderRequest details: {}", performOrderRequest);
+        logger.debug("OrderRequest details: {}", orderRequest);
 
-        orderService.performOrder(performOrderRequest, token);
+        orderService.performOrder(orderRequest, token);
 
         logger.info("Order processed successfully for user with token: {}", token != null ? "Present" : "Missing");
     }

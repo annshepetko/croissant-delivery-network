@@ -1,7 +1,7 @@
 package com.delivery.order.mapper;
 
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.dto.product.OrderProductDto;
-import com.delivery.order.dto.PerformOrderRequest;
 import com.delivery.order.dto.user.OrderPageUserDto;
 import com.delivery.order.entity.Address;
 import com.delivery.order.entity.Order;
@@ -58,34 +58,36 @@ public class OrderMapper {
                 .build();
     }
     public Order buildOrder(OrderBody orderBody) {
-        Address address = addressMapper.mapToAddress(orderBody.getPerformOrderRequest().address());
+        Address address = addressMapper.mapToAddress(orderBody.getOrderRequest().address());
 
         Order order = Order.builder()
                 .createdAt(LocalDateTime.now())
                 .orderStatus(OrderStatus.ACCEPTED)
                 .email(orderBody.getEmail())
                 .totalPrice(orderBody.getPrice())
-                .userLastName(orderBody.getPerformOrderRequest().userFirstname())
-                .userFirstName(orderBody.getPerformOrderRequest().userFirstname())
-                .userPhoneNumber(orderBody.getPerformOrderRequest().userPhoneNumber())
+                .userLastName(orderBody.getOrderRequest().userFirstname())
+                .userFirstName(orderBody.getOrderRequest().userFirstname())
+                .userPhoneNumber(orderBody.getOrderRequest().userPhoneNumber())
                 .build();
 
 
-        order.setOrderedProducts(mapToOrderedProduct(orderBody.getPerformOrderRequest().orderProductDtos(), order));
+        order.setOrderedProducts(mapToOrderedProduct(orderBody.getOrderRequest().orderProductDtos(), order));
         address.setOrder(order);
         return order;
     }
-
+    public OrderBody buildOrderBody(OrderRequest orderRequest, String email, BigDecimal price){
+        return new OrderBody(orderRequest, email, price);
+    }
     @Builder
     @Getter
     public static class OrderBody {
 
-        private PerformOrderRequest performOrderRequest;
+        private OrderRequest orderRequest;
         private String email;
         private BigDecimal price;
 
-        public OrderBody(PerformOrderRequest performOrderRequest, String email, BigDecimal price) {
-            this.performOrderRequest = performOrderRequest;
+        public OrderBody(OrderRequest orderRequest, String email, BigDecimal price) {
+            this.orderRequest = orderRequest;
             this.email = email;
             this.price = price;
         }

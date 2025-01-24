@@ -22,16 +22,16 @@ public class EmailNotificationService implements NotificationService<EmailNotifi
 
     @Override
     public void send(EmailNotification notification) {
-        log.info("Preparing to send email notification for email: {}", notification.email());
+        log.info("Preparing to send email notification for email: {}", notification.getEmail());
 
         try {
 
             kafkaTemplate.send("order-confirmation", "message", notification);
 
-            log.info("Successfully sent email notification for email: {}", notification.email());
+            log.info("Successfully sent email notification for email: {}", notification.getEmail());
         } catch (Exception e) {
 
-            log.error("Failed to send email notification for email: {}. Error: {}", notification.email(), e.getMessage(), e);
+            log.error("Failed to send email notification for email: {}. Error: {}", notification.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send email notification", e);
         }
     }

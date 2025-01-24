@@ -1,13 +1,19 @@
 package com.delivery.order.kafka.notification;
 
+import com.delivery.order.service.interfaces.NotificationService;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
-public record UserNotification(
+@Getter
+public class UserNotification implements CommonNotification{
+    private String email;
+    private Double bonuses;
+    private Long orderId;
+    private NotificationService notificationService;
 
-        String email,
-        Double bonuses,
-        Long orderId
-
-){
+    @Override
+    public void send(NotificationService notificationService) {
+        notificationService.send(this);
+    }
 }

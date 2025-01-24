@@ -1,6 +1,6 @@
 package com.delivery.order.service.impl.order;
 
-import com.delivery.order.dto.PerformOrderRequest;
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.dto.product.OrderProductDto;
 import com.delivery.order.entity.Order;
 import com.delivery.order.mapper.OrderMapper;
@@ -41,10 +41,10 @@ class SimpleOrderProcessorTest {
 
         SimpleOrderProcessor.BonusWriteOff bonusWriteOff = new SimpleOrderProcessor.BonusWriteOff(10.0, true);
 
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest(10.0, true);
+        OrderRequest orderRequest = createPerformOrderRequest(10.0, true);
 
         OrderMapper.OrderBody orderBody = new OrderMapper.OrderBody(
-                performOrderRequest,
+                orderRequest,
                 "user@example.com",
                 BigDecimal.valueOf(20.0)
         );
@@ -58,10 +58,10 @@ class SimpleOrderProcessorTest {
 
         BigDecimal expectedPrice = BigDecimal.valueOf(10.0);
 
-        when(discountService.calculateTotalPrice(performOrderRequest.orderProductDtos(), bonusWriteOff)).thenReturn(expectedPrice);
-        when(orderEntityService.saveOrder(any(OrderMapper.OrderBody.class))).thenReturn(order);
+        when(discountService.calculateTotalPrice(orderRequest.orderProductDtos(), bonusWriteOff)).thenReturn(expectedPrice);
+        when(orderEntityService.saveOrder(any(Order.class))).thenReturn(order);
 
-        Order resultOrder = simpleOrderProcessor.processOrder(performOrderRequest, userOptional);
+        Order resultOrder = simpleOrderProcessor.processOrder(orderRequest, userOptional);
 
         assertEquals(expectedPrice, resultOrder.getTotalPrice()); // Assuming you have a getPrice method in Order
         verify(discountService, times(1)).calculateTotalPrice(any(), any());
@@ -72,10 +72,10 @@ class SimpleOrderProcessorTest {
     void testProcessOrderWithoutWriteOffBonuses() {
 
 
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest(10.0, false);
+        OrderRequest orderRequest = createPerformOrderRequest(10.0, false);
 
         OrderMapper.OrderBody orderBody = new OrderMapper.OrderBody(
-                performOrderRequest,
+                orderRequest,
                 "user@example.com",
                 BigDecimal.valueOf(20.0)
         );
@@ -89,24 +89,24 @@ class SimpleOrderProcessorTest {
         Optional<UserDto> userOptional = Optional.of(userDto);
         BigDecimal expectedPrice = BigDecimal.valueOf(20.0); // No bonuses used
 
-        when(discountService.calculateTotalPrice(performOrderRequest.orderProductDtos(), bonusWriteOff)).thenReturn(expectedPrice);
-        when(orderEntityService.saveOrder(any(OrderMapper.OrderBody.class))).thenReturn(order);
+        when(discountService.calculateTotalPrice(orderRequest.orderProductDtos(), bonusWriteOff)).thenReturn(expectedPrice);
+        when(orderEntityService.saveOrder(any(Order.class))).thenReturn(order);
 
-        Order resultOrder = simpleOrderProcessor.processOrder(performOrderRequest, userOptional);
+        Order resultOrder = simpleOrderProcessor.processOrder(orderRequest, userOptional);
 
         assertEquals(expectedPrice, resultOrder.getTotalPrice());
         verify(discountService, times(1)).calculateTotalPrice(any(), any());
-        verify(orderEntityService, times(1)).saveOrder(any(OrderMapper.OrderBody.class));
+        verify(orderEntityService, times(1)).saveOrder(any(Order.class));
     }
 
 
     @Test
     void testBuildBonusWriteOffWithWriteOff() {
         // Arrange
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest(10.0, true);
+        OrderRequest orderRequest = createPerformOrderRequest(10.0, true);
 
         // Act
-        SimpleOrderProcessor.BonusWriteOff bonusWriteOff = simpleOrderProcessor.buildBonusWriteOff(performOrderRequest);
+        SimpleOrderProcessor.BonusWriteOff bonusWriteOff = simpleOrderProcessor.buildBonusWriteOff(orderRequest);
 
         // Assert
         assertEquals(10.0, bonusWriteOff.getBonuses());
@@ -116,18 +116,18 @@ class SimpleOrderProcessorTest {
     @Test
     void testBuildBonusWriteOffWithoutWriteOff() {
         // Arrange
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest(10.0, false);
+        OrderRequest orderRequest = createPerformOrderRequest(10.0, false);
 
         // Act
-        SimpleOrderProcessor.BonusWriteOff bonusWriteOff = simpleOrderProcessor.buildBonusWriteOff(performOrderRequest);
+        SimpleOrderProcessor.BonusWriteOff bonusWriteOff = simpleOrderProcessor.buildBonusWriteOff(orderRequest);
 
         // Assert
         assertEquals(12.0, bonusWriteOff.getBonuses()); // +2 added
         assertEquals(false, bonusWriteOff.getIsWriteOff());
     }
 
-    private PerformOrderRequest createPerformOrderRequest(Double bonuses, Boolean isWriteOff) {
-        return new PerformOrderRequest(
+    private OrderRequest createPerformOrderRequest(Double bonuses, Boolean isWriteOff) {
+        return new OrderRequest(
                 List.of(OrderProductDto.builder()
                                 .amount(1)
                                 .price(BigDecimal.valueOf(10))

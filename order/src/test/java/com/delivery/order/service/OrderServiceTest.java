@@ -1,10 +1,10 @@
 package com.delivery.order.service;
 
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.service.impl.order.AuthorizedOrderProcessor;
 import com.delivery.order.service.impl.order.SimpleOrderProcessor;
 import org.junit.jupiter.api.Test;
 
-import com.delivery.order.dto.PerformOrderRequest;
 import com.delivery.order.openFeign.clients.OrderClient;
 import com.delivery.order.openFeign.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,34 +42,34 @@ class OrderServiceTest {
     @Test
     void testPerformOrderWithAuthorizedUser() {
         String token = "Bearer token";
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest();
+        OrderRequest orderRequest = createPerformOrderRequest();
         UserDto userDto = new UserDto("user@example.com", 10.0);
         Optional<UserDto> userOptional = Optional.of(userDto);
 
         when(orderClient.getUserId(token)).thenReturn(new ResponseEntity<>(userOptional, HttpStatusCode.valueOf(200))); // <-- Correct response
 
-        orderService.performOrder(performOrderRequest, token);
+        orderService.performOrder(orderRequest, token);
 
-        verify(simpleOrderProcessor, times(0)).processOrder(performOrderRequest, userOptional);
-        verify(authorizedOrderProcessor, times(1)).processOrder(performOrderRequest, userOptional); // <-- This should now work
+        verify(simpleOrderProcessor, times(0)).processOrder(orderRequest, userOptional);
+        verify(authorizedOrderProcessor, times(1)).processOrder(orderRequest, userOptional); // <-- This should now work
     }
 
     @Test
     void testPerformOrderWithUnauthorizedUser() {
         String token = "Bearer token";
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest();
+        OrderRequest orderRequest = createPerformOrderRequest();
         Optional<UserDto> emptyUser = Optional.empty();
 
         when(orderClient.getUserId(token)).thenReturn(new ResponseEntity<>(emptyUser, HttpStatus.OK));
 
-        orderService.performOrder(performOrderRequest, token);
+        orderService.performOrder(orderRequest, token);
 
     }
 
 
 
-    private PerformOrderRequest createPerformOrderRequest() {
-        return new PerformOrderRequest(
+    private OrderRequest createPerformOrderRequest() {
+        return new OrderRequest(
                 List.of(),
                 "John",
                 "Doe",

@@ -1,5 +1,7 @@
 package com.delivery.order.service.interfaces;
 
-public interface NotificationService<T> {
+import com.delivery.order.kafka.notification.CommonNotification;
+
+public interface NotificationService<T extends CommonNotification> {
      void send(T notification);
 }

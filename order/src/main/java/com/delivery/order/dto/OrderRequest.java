@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public record PerformOrderRequest (
+public record OrderRequest(
 
         @JsonProperty(required = true)
         @Size(min = 1, message = "Products must be greater than zero ")

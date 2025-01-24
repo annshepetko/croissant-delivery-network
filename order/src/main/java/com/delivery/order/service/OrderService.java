@@ -1,16 +1,12 @@
 package com.delivery.order.service;
 
-import com.delivery.order.dto.PerformOrderRequest;
-import com.delivery.order.entity.Order;
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.openFeign.clients.OrderClient;
 import com.delivery.order.openFeign.dto.UserDto;
 import com.delivery.order.service.factory.OrderProcessorFactory;
 import com.delivery.order.service.factory.impl.OrderProcessorFactoryImpl;
-import com.delivery.order.service.impl.order.AuthorizedOrderProcessor;
-import com.delivery.order.service.impl.order.SimpleOrderProcessor;
 import com.delivery.order.service.interfaces.OrderProcessor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,11 +27,10 @@ public class OrderService {
         return orderClient.getUserId(token).getBody();
     }
 
-    public void performOrder(PerformOrderRequest performOrderRequest, String token) {
-
+    public void performOrder(OrderRequest orderRequest, String token) {
         Optional<UserDto> user = getUser(token);
         OrderProcessor orderProcessor = orderProcessorFactory.getOrderProcessor(user);
-        orderProcessor.processOrder(performOrderRequest, user);
+        orderProcessor.processOrder(orderRequest, user);
     }
 
     public void setOrderProcessorFactory(OrderProcessorFactoryImpl orderProcessorFactory) {

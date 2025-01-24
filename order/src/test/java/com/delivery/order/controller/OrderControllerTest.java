@@ -1,6 +1,6 @@
 package com.delivery.order.controller;
 
-import com.delivery.order.dto.PerformOrderRequest;
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,11 +38,11 @@ class OrderControllerTest {
     @Test
     void orderProducts_shouldCallPerformOrder() throws Exception {
 
-        PerformOrderRequest performOrderRequest = createPerformOrderRequest();
+        OrderRequest orderRequest = createPerformOrderRequest();
         String token = "Bearer some-jwt-token";
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String mappedRequest = objectMapper.writeValueAsString(performOrderRequest);
+        String mappedRequest = objectMapper.writeValueAsString(orderRequest);
 
         mockMvc.perform(post("/api/v1/order")
                         .header(HttpHeaders.AUTHORIZATION, token)
@@ -51,14 +51,14 @@ class OrderControllerTest {
                 .andExpect(status().isOk());
 
         verify(orderService, times(1)).performOrder(
-                org.mockito.ArgumentMatchers.any(PerformOrderRequest.class),
+                org.mockito.ArgumentMatchers.any(OrderRequest.class),
                 org.mockito.ArgumentMatchers.eq(token)
         );
     }
 
 
-    private PerformOrderRequest createPerformOrderRequest() {
-        return new PerformOrderRequest(
+    private OrderRequest createPerformOrderRequest() {
+        return new OrderRequest(
                 List.of(),
                 "John",
                 "Doe",

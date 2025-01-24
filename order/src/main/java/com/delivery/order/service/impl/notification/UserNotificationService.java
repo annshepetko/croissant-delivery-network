@@ -22,15 +22,15 @@ public class UserNotificationService implements NotificationService<UserNotifica
     @Override
     public void send(UserNotification notification) {
 
-        log.info("Preparing to send user notification for user: {}", notification.email());
+        log.info("Preparing to send user notification for user: {}", notification.getEmail());
 
         try {
             kafkaTemplate.send("user-order-confirmation", "message", notification);
 
-            log.info("Successfully sent user notification for user: {}", notification.email());
+            log.info("Successfully sent user notification for user: {}", notification.getEmail());
         } catch (Exception e) {
 
-            log.error("Failed to send user notification for user: {}. Error: {}", notification.email(), e.getMessage(), e);
+            log.error("Failed to send user notification for user: {}. Error: {}", notification.getEmail(), e.getMessage(), e);
 
             throw new RuntimeException("Failed to send user notification", e);
         }

@@ -1,6 +1,6 @@
 package com.delivery.order.service.impl.order;
 
-import com.delivery.order.dto.PerformOrderRequest;
+import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.entity.Order;
 import com.delivery.order.mapper.OrderMapper;
 import com.delivery.order.openFeign.dto.UserDto;
@@ -24,40 +24,72 @@ public class SimpleOrderProcessor  implements OrderProcessor {
 
     private final DiscountService discountService;
     private final OrderEntityService orderEntityService;
+    private final OrderMapper orderMapper;
 
-    public SimpleOrderProcessor(DiscountService discountService, OrderEntityService orderEntityService) {
+    public SimpleOrderProcessor(
+            DiscountService discountService,
+            OrderEntityService orderEntityService,
+            OrderMapper orderMapper
+    ) {
         this.discountService = discountService;
         this.orderEntityService = orderEntityService;
+        this.orderMapper = orderMapper;
     }
 
     @Override
-    public Order processOrder(PerformOrderRequest performOrderRequest, Optional<UserDto> user) {
+    public Order processOrder(OrderRequest orderRequest, Optional<UserDto> user) {
 
         logger.info("Staring to process the order");
 
-        BonusWriteOff bonuses = buildBonusWriteOff(performOrderRequest);
+        BigDecimal price = performPriceCalculation(orderRequest);
+        Order order = prepareOrder(orderRequest, user, price);
 
-        String email = user.map(UserDto::email).orElse("empty");
-
-        BigDecimal discountedOrderPrice = discountService.calculateTotalPrice(performOrderRequest.orderProductDtos(), bonuses);
-        OrderMapper.OrderBody orderBody = new OrderMapper.OrderBody(performOrderRequest, email, discountedOrderPrice);
-
-        return orderEntityService.saveOrder(orderBody);
+        return orderEntityService.saveOrder(order);
     }
 
-    public BonusWriteOff buildBonusWriteOff(PerformOrderRequest performOrderRequest) {
+    private BigDecimal performPriceCalculation(OrderRequest orderRequest) {
+        BonusWriteOff bonuses = buildBonusWriteOff(orderRequest);
+        return calculatePrice(orderRequest, bonuses);
+    }
 
+    private Order prepareOrder(
+            OrderRequest orderRequest,
+            Optional<UserDto> user,
+            BigDecimal price
+    ) {
+        String email = handleUserResponse(user);
+        return orderMapper.buildOrder(orderMapper.buildOrderBody(orderRequest,email, price));
+    }
 
+    private  String handleUserResponse(Optional<UserDto> user) {
+
+        return user.map(UserDto::email).orElse("empty");
+    }
+
+    public BonusWriteOff buildBonusWriteOff(OrderRequest orderRequest) {
+
+        return createBonusWriteOff(orderRequest);
+    }
+
+    private BigDecimal calculatePrice(OrderRequest orderRequest, BonusWriteOff bonuses) {
+        return discountService.calculateTotalPrice(orderRequest.orderProductDtos(), bonuses);
+    }
+
+    private BonusWriteOff createBonusWriteOff(OrderRequest orderRequest) {
         BonusWriteOff bonusWriteOff = new BonusWriteOff(
-                performOrderRequest.userBonuses(),
-                performOrderRequest.isWriteOffBonuses()
+                orderRequest.userBonuses(),
+                orderRequest.isWriteOffBonuses()
         );
         if (!bonusWriteOff.getIsWriteOff()){
-
-            bonusWriteOff.setBonuses(bonusWriteOff.getBonuses() + 2);
-            logger.info("Refreshing user bonuses");
+            updateBonuses(bonusWriteOff);
         }
+
         return bonusWriteOff;
+    }
+
+    private void updateBonuses(BonusWriteOff bonusWriteOff) {
+        bonusWriteOff.setBonuses(bonusWriteOff.getBonuses() + 2);
+        logger.info("Refreshing user bonuses");
     }
 
     @Setter
