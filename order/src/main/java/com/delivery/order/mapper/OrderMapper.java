@@ -76,36 +76,15 @@ public class OrderMapper {
         return order;
     }
 
-    public OrderBody createOrderBody(
-            String email,
-            PerformOrderRequest performOrderRequest,
-            BigDecimal price
-    ){
-        return  new OrderBody(performOrderRequest, email, price);
-    }
-
-    public OrderBody createOrderBody(
-            PerformOrderRequest performOrderRequest,
-            BigDecimal price
-    ){
-        return  new OrderBody(performOrderRequest, price);
-    }
     @Builder
     @Getter
-    private static class OrderBody {
+    public static class OrderBody {
 
         private PerformOrderRequest performOrderRequest;
         private String email;
         private BigDecimal price;
 
         public OrderBody(PerformOrderRequest performOrderRequest, String email, BigDecimal price) {
-            this.performOrderRequest = performOrderRequest;
-            this.email = email;
-            this.price = price;
-        }
-
-
-        public OrderBody(PerformOrderRequest performOrderRequest, BigDecimal price) {
             this.performOrderRequest = performOrderRequest;
             this.email = email;
             this.price = price;

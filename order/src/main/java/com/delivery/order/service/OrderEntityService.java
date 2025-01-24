@@ -30,9 +30,9 @@ public class OrderEntityService {
     private final AddressRepository addressRepository;
 
     @Transactional
-    public Order saveOrder(Order orderToSave) {
+    public Order saveOrder(OrderMapper.OrderBody orderBody) {
 
-        Order order = orderRepository.save(orderToSave);
+        Order order = orderRepository.save(orderMapper.buildOrder(orderBody));
 
         logger.info("SAVED ORDER : {}", order.getId() + "at : {}", LocalDateTime.now());
 
