@@ -1,54 +1,66 @@
 package com.delivery.order.service.impl.order;
 
-import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.entity.Order;
+import com.delivery.order.dto.Bonuses;
+import com.delivery.order.dto.OrderBody;
 import com.delivery.order.kafka.notification.CommonNotification;
-import com.delivery.order.mapper.AuthorizedProcessorNotificationBuilder;
-import com.delivery.order.openFeign.dto.UserDto;
+import com.delivery.order.mapper.message.OrderAuthNotificationBuilder;
 import com.delivery.order.service.interfaces.OrderProcessor;
+import com.delivery.order.service.price.AuthPriceService;
+import com.delivery.order.service.price.interfaces.PriceService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthorizedOrderProcessor  implements OrderProcessor {
 
     private final SimpleOrderProcessor simpleOrderProcessor;
-    private final AuthorizedProcessorNotificationBuilder notificationBuilder;
+    private final OrderAuthNotificationBuilder notificationBuilder;
+    private final PriceService authPriceService;
 
     public AuthorizedOrderProcessor(
 
             @Qualifier("simpleOrderProcessor") OrderProcessor simpleOrderProcessor,
-            AuthorizedProcessorNotificationBuilder authorizedProcessorNotificationBuilder
+            OrderAuthNotificationBuilder authorizedProcessorNotificationBuilder,
+
+            @Qualifier("authPriceService")
+            PriceService authPriceService
     ) {
         this.simpleOrderProcessor = (SimpleOrderProcessor) simpleOrderProcessor;
         this.notificationBuilder = authorizedProcessorNotificationBuilder;
+        this.authPriceService = authPriceService;
     }
 
     @Override
-    public Order processOrder(OrderRequest orderRequest, Optional<UserDto> user) {
+    public Order processOrder(OrderBody orderBody) {
 
-        Order order = simpleOrderProcessor.processOrder(orderRequest, user);
-        SimpleOrderProcessor.BonusWriteOff refreshedBonuses = getRefreshedBonuses(orderRequest);
+        Bonuses bonuses = Bonuses.buildBonuses(orderBody);
+        BigDecimal price = authPriceService.calculatePrice(orderBody, bonuses);
 
-        sendNotifications(order, refreshedBonuses);
+        updatePrice(orderBody, price);
+
+        Order order = simpleOrderProcessor.processOrder(orderBody);
+
+        sendNotifications(order, bonuses);
 
         return order;
     }
 
-    private SimpleOrderProcessor.BonusWriteOff getRefreshedBonuses(OrderRequest orderRequest) {
-        return simpleOrderProcessor.buildBonusWriteOff(orderRequest);
+    private void updatePrice(OrderBody orderBody, BigDecimal price) {
+        orderBody.setPrice(price);
     }
 
-    private void sendNotifications(Order order, SimpleOrderProcessor.BonusWriteOff refreshedBonuses) {
+
+    private void sendNotifications(Order order, Bonuses refreshedBonuses) {
 
         List<CommonNotification> listOfNotifications = createNotificationsToSend(order, refreshedBonuses);
         listOfNotifications.forEach(notification -> notification.send(notification.getNotificationService()));
     }
 
-    private List<CommonNotification> createNotificationsToSend(Order order, SimpleOrderProcessor.BonusWriteOff refreshedBonuses) {
+    private List<CommonNotification> createNotificationsToSend(Order order, Bonuses refreshedBonuses) {
 
         return notificationBuilder.createNotifications(order, refreshedBonuses.getBonuses());
     }

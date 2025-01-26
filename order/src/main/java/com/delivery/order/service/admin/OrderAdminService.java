@@ -1,4 +1,4 @@
-package com.delivery.order.service;
+package com.delivery.order.service.admin;
 
 import com.delivery.order.dto.admin.OrderBaseDto;
 import com.delivery.order.dto.admin.OrderPageAdminDto;
@@ -7,6 +7,7 @@ import com.delivery.order.entity.status.OrderStatus;
 import com.delivery.order.exception.DeniedChangeStatusException;
 import com.delivery.order.mapper.OrderAdminMapper;
 import com.delivery.order.repo.OrderRepository;
+import com.delivery.order.service.entity.OrderEntityService;
 import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;

@@ -1,6 +1,8 @@
 package com.delivery.order.service;
 
 import com.delivery.order.dto.OrderRequest;
+import com.delivery.order.dto.OrderBody;
+import com.delivery.order.mapper.OrderBodyService;
 import com.delivery.order.service.impl.order.AuthorizedOrderProcessor;
 import com.delivery.order.service.impl.order.SimpleOrderProcessor;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,15 +31,20 @@ class OrderServiceTest {
     @Mock
     private AuthorizedOrderProcessor authorizedOrderProcessor;
 
+    private OrderBodyService orderBodyService;
+
     @Mock
     private SimpleOrderProcessor simpleOrderProcessor;
 
     @InjectMocks
     private OrderService orderService;
 
+    private OrderBody orderBody;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        orderBody = createOrderBodyTest();
     }
 
     @Test
@@ -50,8 +58,8 @@ class OrderServiceTest {
 
         orderService.performOrder(orderRequest, token);
 
-        verify(simpleOrderProcessor, times(0)).processOrder(orderRequest, userOptional);
-        verify(authorizedOrderProcessor, times(1)).processOrder(orderRequest, userOptional); // <-- This should now work
+        verify(simpleOrderProcessor, times(0)).processOrder(orderBody);
+        verify(authorizedOrderProcessor, times(1)).processOrder(orderBody); // <-- This should now work
     }
 
     @Test
@@ -78,6 +86,11 @@ class OrderServiceTest {
                 0.0,
                 false
         );
+    }
+
+    private OrderBody createOrderBodyTest(){
+
+        return new OrderBody(createPerformOrderRequest(), BigDecimal.valueOf(100), "ann.sh@gmail.com");
     }
 }
 

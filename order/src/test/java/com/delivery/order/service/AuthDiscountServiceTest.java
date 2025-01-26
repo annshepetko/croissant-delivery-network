@@ -1,34 +1,33 @@
 package com.delivery.order.service;
 
 import com.delivery.order.dto.product.OrderProductDto;
-import com.delivery.order.service.impl.order.SimpleOrderProcessor;
+import com.delivery.order.dto.Bonuses;
+import com.delivery.order.service.price.AuthDiscountService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DiscountServiceTest {
+class AuthDiscountServiceTest {
 
 
-
-    private DiscountService discountService;
+    @InjectMocks
+    private AuthDiscountService authDiscountService;
 
     @BeforeEach
     void setUp() {
-        discountService = new DiscountService();
+        authDiscountService = new AuthDiscountService();
     }
 
     @Test
     void calculateTotalPrice() {
 
-        SimpleOrderProcessor.BonusWriteOff bonusWriteOff = new SimpleOrderProcessor.BonusWriteOff(30.0, false);
+       Bonuses bonuses = new Bonuses(30.0, false);
 
         List<OrderProductDto> products = new ArrayList<>();
         products.add(OrderProductDto.builder()
@@ -41,7 +40,7 @@ class DiscountServiceTest {
                         .amount(1)
                 .build());
 
-       BigDecimal totalPrice = discountService.calculateTotalPrice(products, bonusWriteOff);
+       BigDecimal totalPrice = authDiscountService.calculateTotalPrice(BigDecimal.valueOf(60), bonuses);
 
 
        assertEquals(BigDecimal.valueOf(60.0), totalPrice);

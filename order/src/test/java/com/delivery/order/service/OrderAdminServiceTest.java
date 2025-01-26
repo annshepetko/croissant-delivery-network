@@ -7,6 +7,8 @@ import com.delivery.order.entity.OrderedProduct;
 import com.delivery.order.entity.status.OrderStatus;
 import com.delivery.order.exception.DeniedChangeStatusException;
 import com.delivery.order.mapper.OrderAdminMapper;
+import com.delivery.order.service.admin.OrderAdminService;
+import com.delivery.order.service.entity.OrderEntityService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,18 +1,15 @@
 package com.delivery.order.mapper;
 
-import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.dto.product.OrderProductDto;
 import com.delivery.order.dto.user.OrderPageUserDto;
 import com.delivery.order.entity.Address;
 import com.delivery.order.entity.Order;
 import com.delivery.order.entity.OrderedProduct;
+import com.delivery.order.dto.OrderBody;
 import com.delivery.order.entity.status.OrderStatus;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -75,23 +72,5 @@ public class OrderMapper {
         address.setOrder(order);
         return order;
     }
-    public OrderBody buildOrderBody(OrderRequest orderRequest, String email, BigDecimal price){
-        return new OrderBody(orderRequest, email, price);
-    }
-    @Builder
-    @Getter
-    public static class OrderBody {
-
-        private OrderRequest orderRequest;
-        private String email;
-        private BigDecimal price;
-
-        public OrderBody(OrderRequest orderRequest, String email, BigDecimal price) {
-            this.orderRequest = orderRequest;
-            this.email = email;
-            this.price = price;
-        }
-    }
-
 
 }

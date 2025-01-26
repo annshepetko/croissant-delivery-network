@@ -26,7 +26,7 @@ public class OrderProcessorFactoryImpl implements OrderProcessorFactory {
 
     private OrderProcessor handleProcessor(Optional<UserDto> user) {
 
-        if (!user.isEmpty()) {
+        if (user.isPresent()) {
             return applicationContext.getBean(AuthorizedOrderProcessor.class);
         }
         return applicationContext.getBean(SimpleOrderProcessor.class);

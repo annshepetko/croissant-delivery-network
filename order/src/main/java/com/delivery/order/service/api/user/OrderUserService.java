@@ -1,10 +1,11 @@
-package com.delivery.order.service;
+package com.delivery.order.service.api.user;
 
 import com.delivery.order.dto.user.OrderPageUserDto;
 import com.delivery.order.dto.user.OrderUserServiceDto;
 import com.delivery.order.entity.Order;
 import com.delivery.order.mapper.OrderMapper;
 import com.delivery.order.repo.OrderRepository;
+import com.delivery.order.service.entity.OrderEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

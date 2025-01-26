@@ -1,9 +1,10 @@
-package com.delivery.order.mapper;
+package com.delivery.order.mapper.message;
 
 import com.delivery.order.entity.Order;
 import com.delivery.order.kafka.notification.CommonNotification;
 import com.delivery.order.kafka.notification.EmailNotification;
 import com.delivery.order.kafka.notification.UserNotification;
+import com.delivery.order.mapper.OrderMapper;
 import com.delivery.order.service.impl.notification.EmailNotificationService;
 import com.delivery.order.service.impl.notification.UserNotificationService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class AuthorizedProcessorNotificationBuilder {
+public class OrderAuthNotificationBuilder {
 
     private final OrderMapper orderMapper;
     private final EmailNotificationService emailNotificationService;

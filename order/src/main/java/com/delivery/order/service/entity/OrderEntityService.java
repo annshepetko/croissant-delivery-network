@@ -1,15 +1,10 @@
-package com.delivery.order.service;
+package com.delivery.order.service.entity;
 
-import com.delivery.order.entity.Address;
 import com.delivery.order.entity.Order;
-import com.delivery.order.entity.status.OrderStatus;
-import com.delivery.order.mapper.AddressMapper;
 import com.delivery.order.mapper.OrderMapper;
 import com.delivery.order.repo.AddressRepository;
 import com.delivery.order.repo.OrderRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
