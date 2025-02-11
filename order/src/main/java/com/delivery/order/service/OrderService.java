@@ -2,12 +2,12 @@ package com.delivery.order.service;
 
 import com.delivery.order.dto.OrderRequest;
 import com.delivery.order.dto.OrderBody;
-import com.delivery.order.mapper.OrderBodyService;
+import com.delivery.order.mapper.OrderBodyMapper;
 import com.delivery.order.openFeign.clients.OrderClient;
 import com.delivery.order.openFeign.dto.UserDto;
-import com.delivery.order.service.factory.OrderProcessorFactory;
-import com.delivery.order.service.factory.impl.OrderProcessorFactoryImpl;
-import com.delivery.order.service.interfaces.OrderProcessor;
+import com.delivery.order.service.factory.OrderProcessorFacadeFactory;
+import com.delivery.order.service.factory.impl.OrderProcessorFacadeFactoryImpl;
+import com.delivery.order.service.interfaces.facade.OrderProcessorFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderClient orderClient;
-    private OrderProcessorFactory orderProcessorFactory;
-    private final OrderBodyService orderBodyService;
+    private OrderProcessorFacadeFactory orderProcessorFacadeFactory;
+    private final OrderBodyMapper orderBodyMapper;
 
 
     private Optional<UserDto> getUser(String token) {
@@ -34,12 +34,12 @@ public class OrderService {
 
         Optional<UserDto> user = getUser(token);
 
-        OrderProcessor orderProcessor = orderProcessorFactory.getOrderProcessor(user);
-        orderProcessor.processOrder(createOrderBody(orderRequest, user));
+        OrderProcessorFacade orderProcessor = orderProcessorFacadeFactory.getOrderProcessor(user);
+        orderProcessor.handleOrder(createOrderBody(orderRequest, user));
     }
 
     private OrderBody createOrderBody(OrderRequest orderRequest, Optional<UserDto> user) {
-        return orderBodyService.createOrderBody(orderRequest, handleUser(user));
+        return orderBodyMapper.createOrderBody(orderRequest, handleUser(user));
     }
 
     private String handleUser(Optional<UserDto> user){
@@ -47,8 +47,8 @@ public class OrderService {
     }
 
     @Autowired
-    public void setOrderProcessorFactory(OrderProcessorFactoryImpl orderProcessorFactory) {
-        this.orderProcessorFactory = orderProcessorFactory;
+    public void setOrderProcessorFacadeFactory(OrderProcessorFacadeFactoryImpl orderProcessorFactory) {
+        this.orderProcessorFacadeFactory = orderProcessorFactory;
     }
 
 }

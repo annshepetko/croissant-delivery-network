@@ -5,21 +5,23 @@ import com.delivery.order.dto.Bonuses;
 import com.delivery.order.dto.OrderBody;
 import com.delivery.order.kafka.notification.CommonNotification;
 import com.delivery.order.mapper.message.OrderAuthNotificationBuilder;
+import com.delivery.order.service.interfaces.NotifiableOrderProcessor;
 import com.delivery.order.service.interfaces.OrderProcessor;
-import com.delivery.order.service.price.AuthPriceService;
 import com.delivery.order.service.price.interfaces.PriceService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AuthorizedOrderProcessor  implements OrderProcessor {
+public class AuthorizedOrderProcessor implements NotifiableOrderProcessor {
 
     private final SimpleOrderProcessor simpleOrderProcessor;
     private final OrderAuthNotificationBuilder notificationBuilder;
     private final PriceService authPriceService;
+    private List<CommonNotification> notifications = new ArrayList<>();
 
     public AuthorizedOrderProcessor(
 
@@ -44,8 +46,7 @@ public class AuthorizedOrderProcessor  implements OrderProcessor {
 
         Order order = simpleOrderProcessor.processOrder(orderBody);
 
-        sendNotifications(order, bonuses);
-
+        notifications = createNotificationsToSend(order, bonuses);
         return order;
     }
 
@@ -54,16 +55,15 @@ public class AuthorizedOrderProcessor  implements OrderProcessor {
     }
 
 
-    private void sendNotifications(Order order, Bonuses refreshedBonuses) {
-
-        List<CommonNotification> listOfNotifications = createNotificationsToSend(order, refreshedBonuses);
-        listOfNotifications.forEach(notification -> notification.send(notification.getNotificationService()));
-    }
-
     private List<CommonNotification> createNotificationsToSend(Order order, Bonuses refreshedBonuses) {
 
         return notificationBuilder.createNotifications(order, refreshedBonuses.getBonuses());
     }
 
 
+    @Override
+    public List<CommonNotification> getNotifications() {
+
+        return notifications;
+    }
 }

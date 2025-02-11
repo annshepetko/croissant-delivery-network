@@ -23,8 +23,6 @@ public class UserPageService {
 
 
     public UserProfilePage getUserProfile(User user, Pageable pageable) {
-        
-
 
         log.info("FETCHING USER`S ORDERS");
         Page<OrderDto> userOrders = orderDataClient.getAllUserOrders(user.getUsername(),

@@ -27,7 +27,7 @@ public class AuthDiscountService implements DiscountService {
         
     }
 
-    private static BigDecimal reducePrice(BigDecimal price, Bonuses bonuses) {
+    private BigDecimal reducePrice(BigDecimal price, Bonuses bonuses) {
         bonuses.writeOffBonuses();
         return price.subtract(BigDecimal.valueOf(bonuses.getBonuses()));
     }

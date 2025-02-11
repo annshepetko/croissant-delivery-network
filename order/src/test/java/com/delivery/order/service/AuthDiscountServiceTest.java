@@ -43,7 +43,7 @@ class AuthDiscountServiceTest {
        BigDecimal totalPrice = authDiscountService.calculateTotalPrice(BigDecimal.valueOf(60), bonuses);
 
 
-       assertEquals(BigDecimal.valueOf(60.0), totalPrice);
+       assertEquals(BigDecimal.valueOf(60), totalPrice);
 
     }
 }

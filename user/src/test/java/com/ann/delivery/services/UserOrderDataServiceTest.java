@@ -9,10 +9,9 @@ import org.mockito.*;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-class UserOrderServiceTest {
+class UserOrderDataServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -21,7 +20,7 @@ class UserOrderServiceTest {
     private UserEntityService userEntityService;
 
     @InjectMocks
-    private UserOrderService userOrderService;
+    private UserOrderDataService userOrderDataService;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +38,7 @@ class UserOrderServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
-        Optional<UserOrderDto> result = userOrderService.getUserOrderIfPresent(email);
+        Optional<UserOrderDto> result = userOrderDataService.getUserOrderIfPresent(email);
 
         assertTrue(result.isPresent());
         assertEquals(email, result.get().email());

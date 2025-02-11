@@ -4,18 +4,15 @@ import com.ann.delivery.auth.TestConfig;
 import com.ann.delivery.dto.order.UserOrderDto;
 import com.ann.delivery.entity.User;
 import com.ann.delivery.services.JwtService;
-import com.ann.delivery.services.UserOrderService;
+import com.ann.delivery.services.UserOrderDataService;
 import com.ann.delivery.services.UserPageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -36,7 +33,7 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserOrderService userOrderService;
+    private UserOrderDataService userOrderDataService;
 
 
     @MockBean
@@ -51,7 +48,7 @@ class UserControllerTest {
                 .bonuses(52.0)
                 .build();
 
-        when(userOrderService.getUserBonuses(username)).thenReturn(52.0);
+        when(userOrderDataService.getUserBonuses(username)).thenReturn(52.0);
 
         MockHttpServletRequestBuilder requestBuilder = get("/api/user/bonuses")
                 .requestAttr("user", username);
@@ -60,7 +57,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("52.0"));
 
-        verify(userOrderService, times(1)).getUserBonuses(username);
+        verify(userOrderDataService, times(1)).getUserBonuses(username);
     }
 
 
@@ -68,7 +65,7 @@ class UserControllerTest {
     void isUserRegistered() throws Exception {
         UserOrderDto userOrderDto = new UserOrderDto("ann_shh@gmail.com", 52.0);
 
-        when(userOrderService.getUserOrderIfPresent("ann_shh@gmail.com")).thenReturn(Optional.of(userOrderDto));
+        when(userOrderDataService.getUserOrderIfPresent("ann_shh@gmail.com")).thenReturn(Optional.of(userOrderDto));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String expectedJson = objectMapper.writeValueAsString(userOrderDto);
@@ -81,7 +78,7 @@ class UserControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(expectedJson));
 
-        verify(userOrderService, times(1)).getUserOrderIfPresent("ann_shh@gmail.com");
+        verify(userOrderDataService, times(1)).getUserOrderIfPresent("ann_shh@gmail.com");
     }
 
 

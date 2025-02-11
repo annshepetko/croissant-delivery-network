@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-public class OrderBodyService {
+public class OrderBodyMapper {
 
     private final AuthPriceService authPriceService;
 

@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserOrderService {
+public class UserOrderDataService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserOrderService.class);
+    private static final Logger log = LoggerFactory.getLogger(UserOrderDataService.class);
     private final UserRepository userRepository;
 
     public Optional<UserOrderDto> getUserOrderIfPresent(String username) {

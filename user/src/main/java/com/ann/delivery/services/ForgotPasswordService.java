@@ -64,13 +64,7 @@ public class ForgotPasswordService {
 
     private void tryResetPassword(ResetPasswordRequest resetPasswordRequest, String token) {
         try {
-            String email = jwtService.extractUsername(token);
-            User user = userEntityService.getUserByEmail(email);
-
-            log.info("Resetting password for user: {}", email);
-            user.setPassword(passwordEncoder.encode(resetPasswordRequest.password()));
-            log.info("Password successfully reset for user: {}", email);
-            userEntityService.saveUser(user);
+            setNewPassword(resetPasswordRequest, token);
 
         } catch (ExpiredJwtException e) {
             log.warn("Expired JWT token: {}", token);
@@ -79,5 +73,16 @@ public class ForgotPasswordService {
             log.error("Invalid JWT token: {}", token);
             throw new JwtException("Invalid token");
         }
+    }
+
+    private void setNewPassword(ResetPasswordRequest resetPasswordRequest, String token) {
+
+        String email = jwtService.extractUsername(token);
+        User user = userEntityService.getUserByEmail(email);
+
+        log.info("Resetting password for user: {}", email);
+        user.setPassword(passwordEncoder.encode(resetPasswordRequest.password()));
+        log.info("Password successfully reset for user: {}", email);
+        userEntityService.saveUser(user);
     }
 }
